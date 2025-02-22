@@ -1,8 +1,10 @@
-
 import { Transaction, Budget } from "@/types/transaction";
+import { Note } from "@/types/note";
 
 const TRANSACTIONS_KEY = "finance_transactions";
 const BUDGETS_KEY = "finance_budgets";
+const NOTES_KEY = "finance_notes";
+const THEME_KEY = "finance_theme";
 
 export const storageService = {
   // Transactions
@@ -58,5 +60,41 @@ export const storageService = {
       budget.spent += amount;
       localStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
     }
+  },
+
+  // Notes
+  getNotes: (): Note[] => {
+    const stored = localStorage.getItem(NOTES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  },
+
+  saveNote: (note: Note) => {
+    const notes = storageService.getNotes();
+    notes.push(note);
+    localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+  },
+
+  updateNote: (note: Note) => {
+    const notes = storageService.getNotes();
+    const index = notes.findIndex((n) => n.id === note.id);
+    if (index !== -1) {
+      notes[index] = note;
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    }
+  },
+
+  deleteNote: (id: string) => {
+    const notes = storageService.getNotes();
+    const filtered = notes.filter((n) => n.id !== id);
+    localStorage.setItem(NOTES_KEY, JSON.stringify(filtered));
+  },
+
+  // Theme
+  getTheme: (): "light" | "dark" | "system" => {
+    return (localStorage.getItem(THEME_KEY) as "light" | "dark" | "system") || "system";
+  },
+
+  setTheme: (theme: "light" | "dark" | "system") => {
+    localStorage.setItem(THEME_KEY, theme);
   },
 };

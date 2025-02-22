@@ -1,5 +1,5 @@
-
 import React from "react";
+import { Moon, Sun, Monitor } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { Transaction, TransactionCategory, Budget } from "@/types/transaction";
 import { storageService } from "@/services/localStorage";
@@ -8,11 +8,27 @@ const Settings = () => {
   const [budgets, setBudgets] = React.useState<Budget[]>([]);
   const [newCategory, setNewCategory] = React.useState<TransactionCategory>("Food & Dining");
   const [newAmount, setNewAmount] = React.useState("");
+  const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
+    storageService.getTheme()
+  );
 
   React.useEffect(() => {
     const loadedBudgets = storageService.getBudgets();
     setBudgets(loadedBudgets);
   }, []);
+
+  const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
+    setTheme(newTheme);
+    storageService.setTheme(newTheme);
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else if (newTheme === "light") {
+      document.documentElement.classList.remove("dark");
+    } else {
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.classList.toggle("dark", isDark);
+    }
+  };
 
   const handleAddBudget = () => {
     if (!newAmount) return;
@@ -32,6 +48,46 @@ const Settings = () => {
     <MobileLayout>
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-bold">Settings</h1>
+
+        {/* Theme Settings */}
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">Theme</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <button
+              className={`flex flex-col items-center justify-center p-4 rounded-lg border ${
+                theme === "light"
+                  ? "border-mint-500 bg-mint-50 text-mint-500"
+                  : "border-gray-200"
+              }`}
+              onClick={() => handleThemeChange("light")}
+            >
+              <Sun size={24} />
+              <span className="mt-2 text-sm">Light</span>
+            </button>
+            <button
+              className={`flex flex-col items-center justify-center p-4 rounded-lg border ${
+                theme === "dark"
+                  ? "border-mint-500 bg-mint-50 text-mint-500"
+                  : "border-gray-200"
+              }`}
+              onClick={() => handleThemeChange("dark")}
+            >
+              <Moon size={24} />
+              <span className="mt-2 text-sm">Dark</span>
+            </button>
+            <button
+              className={`flex flex-col items-center justify-center p-4 rounded-lg border ${
+                theme === "system"
+                  ? "border-mint-500 bg-mint-50 text-mint-500"
+                  : "border-gray-200"
+              }`}
+              onClick={() => handleThemeChange("system")}
+            >
+              <Monitor size={24} />
+              <span className="mt-2 text-sm">System</span>
+            </button>
+          </div>
+        </div>
 
         {/* Budget Management */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
