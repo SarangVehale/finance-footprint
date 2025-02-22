@@ -1,69 +1,178 @@
-# Welcome to your Lovable project
 
-## Project info
+# Finance Footprint - Personal Finance Tracker
 
-**URL**: https://lovable.dev/projects/5e0d366b-0b03-47e3-9f18-23e461d553f8
+A beautiful, intuitive mobile-first web application for tracking personal finances. Built with React, TypeScript, and modern web technologies.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 📱 Mobile-first design with native-like experience
+- 💰 Track income and expenses
+- 📊 Visual analytics and insights
+- 🎯 Budget management and tracking
+- 📱 Cross-platform compatibility (iOS & Android)
+- 🔒 Local data storage for privacy
+- ⚡ Lightning-fast performance
+- 🎨 Beautiful, intuitive interface
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5e0d366b-0b03-47e3-9f18-23e461d553f8) and start prompting.
+- React with TypeScript
+- Tailwind CSS for styling
+- Vite for blazing fast development
+- Capacitor for native mobile functionality
+- Recharts for beautiful data visualization
+- Local Storage for data persistence
+- React Router for navigation
+- Lucide Icons for beautiful iconography
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js 16 or higher
+- npm or yarn
+- iOS/Android development environment (for mobile deployment)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd finance-footprint
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Building for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Build the web application:
+```bash
+npm run build
+```
 
-**Use GitHub Codespaces**
+2. Add mobile platforms:
+```bash
+npx cap add ios
+npx cap add android
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. Update native dependencies:
+```bash
+npx cap sync
+```
 
-## What technologies are used for this project?
+4. Open native IDEs:
+```bash
+npx cap open ios     # For iOS
+npx cap open android # For Android
+```
 
-This project is built with .
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+src/
+├── components/      # Reusable UI components
+├── pages/          # Page components
+├── services/       # Service layer (localStorage)
+├── types/          # TypeScript type definitions
+├── App.tsx         # Main application component
+└── main.tsx        # Application entry point
+```
 
-## How can I deploy this project?
+## Development Guidelines
 
-Simply open [Lovable](https://lovable.dev/projects/5e0d366b-0b03-47e3-9f18-23e461d553f8) and click on Share -> Publish.
+### Code Style
 
-## I want to use a custom domain - is that possible?
+- Use TypeScript for type safety
+- Follow functional component patterns
+- Use hooks for state management
+- Keep components small and focused
+- Use meaningful variable and function names
+- Add comments for complex logic
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### State Management
+
+The application uses local storage for data persistence with a simple service layer:
+
+- `localStorage.ts` handles all data operations
+- Data is stored in the browser's localStorage
+- Automatic data persistence
+- Type-safe operations
+
+### Mobile Development
+
+The application is built with Capacitor for native mobile functionality:
+
+1. Build the web application
+2. Sync with Capacitor
+3. Open in Xcode/Android Studio
+4. Build and run on device/simulator
+
+## Debugging
+
+### Common Issues
+
+1. Storage Issues:
+   - Clear localStorage if data becomes corrupted
+   - Check browser storage limits
+
+2. Mobile Development:
+   - Ensure Capacitor is properly synchronized
+   - Check platform-specific logs
+   - Use browser dev tools for web debugging
+
+### Development Tools
+
+- Browser DevTools for web debugging
+- Xcode/Android Studio for native debugging
+- React DevTools for component inspection
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Deployment
+
+### Web Deployment
+
+1. Build the production bundle:
+```bash
+npm run build
+```
+
+2. Deploy the `dist` folder to your hosting provider
+
+### Mobile Deployment
+
+#### iOS
+1. Open Xcode project
+2. Configure signing
+3. Build and archive
+4. Submit to App Store
+
+#### Android
+1. Open Android Studio project
+2. Configure signing
+3. Build release APK/Bundle
+4. Submit to Play Store
+
+## Support
+
+For support, please open an issue in the repository or contact the maintainers.
+
