@@ -1,178 +1,92 @@
 
-# Finance Footprint - Personal Finance Tracker
+# Finance Footprint
 
-A beautiful, intuitive mobile-first web application for tracking personal finances. Built with React, TypeScript, and modern web technologies.
+A modern, intuitive personal finance tracking application built with React, TypeScript, and Tailwind CSS.
 
 ## Features
 
-- 📱 Mobile-first design with native-like experience
 - 💰 Track income and expenses
 - 📊 Visual analytics and insights
-- 🎯 Budget management and tracking
-- 📱 Cross-platform compatibility (iOS & Android)
-- 🔒 Local data storage for privacy
-- ⚡ Lightning-fast performance
-- 🎨 Beautiful, intuitive interface
-
-## Tech Stack
-
-- React with TypeScript
-- Tailwind CSS for styling
-- Vite for blazing fast development
-- Capacitor for native mobile functionality
-- Recharts for beautiful data visualization
-- Local Storage for data persistence
-- React Router for navigation
-- Lucide Icons for beautiful iconography
+- 🌙 Dark mode support
+- 💱 Multiple currency support
+- 📱 Mobile-responsive design
+- 🔄 Real-time updates
+- 📝 Transaction management
+- 📈 Spending analysis
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 16 or higher
+- Node.js 16.0 or higher
 - npm or yarn
-- iOS/Android development environment (for mobile deployment)
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/yourusername/finance-footprint.git
 cd finance-footprint
 ```
 
-2. Install dependencies:
+2. Install dependencies
 ```bash
 npm install
+# or
+yarn install
 ```
 
-3. Start the development server:
+3. Start the development server
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
-### Building for Production
+## Contributing
 
-1. Build the web application:
-```bash
-npm run build
-```
+We welcome contributions! Please follow these steps:
 
-2. Add mobile platforms:
-```bash
-npx cap add ios
-npx cap add android
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-3. Update native dependencies:
-```bash
-npx cap sync
-```
+### Development Guidelines
 
-4. Open native IDEs:
-```bash
-npx cap open ios     # For iOS
-npx cap open android # For Android
-```
+- Follow the existing code style and conventions
+- Write meaningful commit messages
+- Add appropriate documentation for new features
+- Ensure all tests pass before submitting PRs
 
 ## Project Structure
 
 ```
 src/
-├── components/      # Reusable UI components
-├── pages/          # Page components
-├── services/       # Service layer (localStorage)
-├── types/          # TypeScript type definitions
-├── App.tsx         # Main application component
-└── main.tsx        # Application entry point
+├── components/     # Reusable UI components
+├── pages/         # Page components
+├── services/      # Business logic and services
+├── types/         # TypeScript type definitions
+├── hooks/         # Custom React hooks
+└── utils/         # Utility functions
 ```
 
-## Development Guidelines
+## Built With
 
-### Code Style
-
-- Use TypeScript for type safety
-- Follow functional component patterns
-- Use hooks for state management
-- Keep components small and focused
-- Use meaningful variable and function names
-- Add comments for complex logic
-
-### State Management
-
-The application uses local storage for data persistence with a simple service layer:
-
-- `localStorage.ts` handles all data operations
-- Data is stored in the browser's localStorage
-- Automatic data persistence
-- Type-safe operations
-
-### Mobile Development
-
-The application is built with Capacitor for native mobile functionality:
-
-1. Build the web application
-2. Sync with Capacitor
-3. Open in Xcode/Android Studio
-4. Build and run on device/simulator
-
-## Debugging
-
-### Common Issues
-
-1. Storage Issues:
-   - Clear localStorage if data becomes corrupted
-   - Check browser storage limits
-
-2. Mobile Development:
-   - Ensure Capacitor is properly synchronized
-   - Check platform-specific logs
-   - Use browser dev tools for web debugging
-
-### Development Tools
-
-- Browser DevTools for web debugging
-- Xcode/Android Studio for native debugging
-- React DevTools for component inspection
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+- [React Query](https://tanstack.com/query/latest)
+- [Recharts](https://recharts.org/)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Deployment
+## Acknowledgments
 
-### Web Deployment
-
-1. Build the production bundle:
-```bash
-npm run build
-```
-
-2. Deploy the `dist` folder to your hosting provider
-
-### Mobile Deployment
-
-#### iOS
-1. Open Xcode project
-2. Configure signing
-3. Build and archive
-4. Submit to App Store
-
-#### Android
-1. Open Android Studio project
-2. Configure signing
-3. Build release APK/Bundle
-4. Submit to Play Store
-
-## Support
-
-For support, please open an issue in the repository or contact the maintainers.
+- Thanks to all contributors who help improve this project
+- Special thanks to the open-source community for the amazing tools and libraries
 
