@@ -3,7 +3,9 @@ import React from "react";
 import {
   PieChart as PieChartIcon,
   TrendingUp,
-  AlertCircle,
+  Calendar,
+  ChevronDown,
+  Filter,
 } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
@@ -14,8 +16,16 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
-import { Transaction, Budget } from "@/types/transaction";
+import { Transaction } from "@/types/transaction";
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval } from "date-fns";
+
+type DateRange = "week" | "month" | "year" | "custom";
 
 const COLORS = [
   "#2a9d8f",
@@ -28,17 +38,60 @@ const COLORS = [
 
 const Analytics = () => {
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-  const [budgets, setBudgets] = React.useState<Budget[]>([]);
+  const [dateRange, setDateRange] = React.useState<DateRange>("month");
+  const [customStartDate, setCustomStartDate] = React.useState<string>("");
+  const [customEndDate, setCustomEndDate] = React.useState<string>("");
+  const [showDateFilter, setShowDateFilter] = React.useState(false);
+  const currency = storageService.getCurrency();
 
   React.useEffect(() => {
     const loadedTransactions = storageService.getTransactions();
-    const loadedBudgets = storageService.getBudgets();
     setTransactions(loadedTransactions);
-    setBudgets(loadedBudgets);
   }, []);
 
+  const getCurrencySymbol = (currency: string) => {
+    const symbols: { [key: string]: string } = {
+      USD: "$",
+      EUR: "€",
+      GBP: "£",
+      JPY: "¥",
+      AUD: "A$",
+      CAD: "C$",
+      CHF: "Fr",
+      CNY: "¥",
+      INR: "₹",
+    };
+    return symbols[currency] || currency;
+  };
+
+  const getDateRange = () => {
+    const now = new Date();
+    switch (dateRange) {
+      case "week":
+        return { start: startOfWeek(now), end: endOfWeek(now) };
+      case "month":
+        return { start: startOfMonth(now), end: endOfMonth(now) };
+      case "year":
+        return { start: startOfYear(now), end: endOfYear(now) };
+      case "custom":
+        return {
+          start: new Date(customStartDate),
+          end: new Date(customEndDate),
+        };
+      default:
+        return { start: startOfMonth(now), end: endOfMonth(now) };
+    }
+  };
+
+  const filteredTransactions = React.useMemo(() => {
+    const { start, end } = getDateRange();
+    return transactions.filter((t) =>
+      isWithinInterval(new Date(t.date), { start, end })
+    );
+  }, [transactions, dateRange, customStartDate, customEndDate]);
+
   const expensesByCategory = React.useMemo(() => {
-    const expenses = transactions.filter((t) => t.type === "expense");
+    const expenses = filteredTransactions.filter((t) => t.type === "expense");
     const grouped = expenses.reduce((acc, curr) => {
       const existing = acc.find((item) => item.name === curr.category);
       if (existing) {
@@ -49,51 +102,126 @@ const Analytics = () => {
       return acc;
     }, [] as { name: string; value: number }[]);
 
-    return grouped;
-  }, [transactions]);
+    return grouped.sort((a, b) => b.value - a.value);
+  }, [filteredTransactions]);
+
+  const dailyExpenses = React.useMemo(() => {
+    const expenses = filteredTransactions
+      .filter((t) => t.type === "expense")
+      .reduce((acc, curr) => {
+        const date = format(new Date(curr.date), "MMM d");
+        const existing = acc.find((item) => item.date === date);
+        if (existing) {
+          existing.amount += curr.amount;
+        } else {
+          acc.push({ date, amount: curr.amount });
+        }
+        return acc;
+      }, [] as { date: string; amount: number }[]);
+
+    return expenses.sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [filteredTransactions]);
 
   const totalIncome = React.useMemo(
     () =>
-      transactions
+      filteredTransactions
         .filter((t) => t.type === "income")
         .reduce((sum, t) => sum + t.amount, 0),
-    [transactions]
+    [filteredTransactions]
   );
 
   const totalExpenses = React.useMemo(
     () =>
-      transactions
+      filteredTransactions
         .filter((t) => t.type === "expense")
         .reduce((sum, t) => sum + t.amount, 0),
-    [transactions]
+    [filteredTransactions]
   );
 
   return (
     <MobileLayout>
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-bold">Analytics</h1>
+      <div className="p-6 space-y-6 dark:bg-gray-900">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold dark:text-white">Analytics</h1>
+          <button
+            onClick={() => setShowDateFilter(!showDateFilter)}
+            className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <Filter size={16} />
+            <span className="dark:text-white">{dateRange}</span>
+            <ChevronDown size={16} />
+          </button>
+        </div>
+
+        {showDateFilter && (
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm space-y-4">
+            <div className="grid grid-cols-4 gap-2">
+              {["week", "month", "year", "custom"].map((range) => (
+                <button
+                  key={range}
+                  onClick={() => {
+                    setDateRange(range as DateRange);
+                    if (range !== "custom") setShowDateFilter(false);
+                  }}
+                  className={`p-2 rounded-lg transition-colors ${
+                    dateRange === range
+                      ? "bg-mint-500 text-white"
+                      : "bg-gray-100 dark:bg-gray-700 dark:text-white"
+                  }`}
+                >
+                  {range}
+                </button>
+              ))}
+            </div>
+
+            {dateRange === "custom" && (
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Overview Cards */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
             <div className="flex items-center text-green-500 mb-2">
               <TrendingUp size={16} className="mr-1" />
-              <span className="text-sm">Total Income</span>
+              <span className="text-sm dark:text-white">Total Income</span>
             </div>
-            <p className="text-lg font-semibold">${totalIncome.toFixed(2)}</p>
+            <p className="text-lg font-semibold dark:text-white">
+              {getCurrencySymbol(currency)}
+              {totalIncome.toFixed(2)}
+            </p>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
             <div className="flex items-center text-red-500 mb-2">
               <TrendingUp size={16} className="mr-1 transform rotate-180" />
-              <span className="text-sm">Total Expenses</span>
+              <span className="text-sm dark:text-white">Total Expenses</span>
             </div>
-            <p className="text-lg font-semibold">${totalExpenses.toFixed(2)}</p>
+            <p className="text-lg font-semibold dark:text-white">
+              {getCurrencySymbol(currency)}
+              {totalExpenses.toFixed(2)}
+            </p>
           </div>
         </div>
 
         {/* Expense Distribution */}
-        <div className="bg-white p-4 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Expense Distribution</h2>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 dark:text-white">Expense Distribution</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -122,11 +250,11 @@ const Analytics = () => {
                       <text
                         x={x}
                         y={y}
-                        fill="#333"
+                        fill={theme === "dark" ? "#fff" : "#333"}
                         textAnchor={x > cx ? "start" : "end"}
                         dominantBaseline="central"
                       >
-                        {`$${value.toFixed(0)}`}
+                        {`${getCurrencySymbol(currency)}${value.toFixed(0)}`}
                       </text>
                     );
                   }}
@@ -138,46 +266,69 @@ const Analytics = () => {
                     />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  formatter={(value: number) =>
+                    `${getCurrencySymbol(currency)}${value.toFixed(2)}`
+                  }
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Budget Progress */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Budget Progress</h2>
-          {budgets.map((budget) => (
-            <div
-              key={budget.category}
-              className="bg-white p-4 rounded-xl shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">{budget.category}</span>
-                <span className="text-sm text-gray-500">
-                  ${budget.spent.toFixed(2)} / ${budget.amount.toFixed(2)}
-                </span>
-              </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${
-                    budget.spent > budget.amount
-                      ? "bg-red-500"
-                      : budget.spent / budget.amount > 0.8
-                      ? "bg-yellow-500"
-                      : "bg-mint-500"
-                  }`}
-                  style={{
-                    width: `${Math.min(
-                      (budget.spent / budget.amount) * 100,
-                      100
-                    )}%`,
-                  }}
+        {/* Daily Expenses Trend */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 dark:text-white">Expense Trend</h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dailyExpenses}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  stroke={theme === "dark" ? "#fff" : "#333"}
                 />
+                <YAxis
+                  stroke={theme === "dark" ? "#fff" : "#333"}
+                  tickFormatter={(value) =>
+                    `${getCurrencySymbol(currency)}${value}`
+                  }
+                />
+                <Tooltip
+                  formatter={(value: number) =>
+                    `${getCurrencySymbol(currency)}${value.toFixed(2)}`
+                  }
+                />
+                <Bar dataKey="amount" fill="#2a9d8f" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Category Breakdown */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 dark:text-white">Category Breakdown</h2>
+          <div className="space-y-4">
+            {expensesByCategory.map((category) => (
+              <div key={category.name} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm dark:text-white">{category.name}</span>
+                  <span className="text-sm font-medium dark:text-white">
+                    {getCurrencySymbol(currency)}
+                    {category.value.toFixed(2)}
+                  </span>
+                </div>
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-mint-500"
+                    style={{
+                      width: `${(category.value / totalExpenses) * 100}%`,
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </MobileLayout>
