@@ -5,6 +5,7 @@ const TRANSACTIONS_KEY = "finance_transactions";
 const BUDGETS_KEY = "finance_budgets";
 const NOTES_KEY = "finance_notes";
 const THEME_KEY = "finance_theme";
+const CURRENCY_KEY = "finance_currency";
 
 export const storageService = {
   // Transactions
@@ -96,5 +97,14 @@ export const storageService = {
 
   setTheme: (theme: "light" | "dark" | "system") => {
     localStorage.setItem(THEME_KEY, theme);
+  },
+
+  // Currency
+  getCurrency: (): string => {
+    return localStorage.getItem(CURRENCY_KEY) || "USD";
+  },
+
+  setCurrency: (currency: string) => {
+    localStorage.setItem(CURRENCY_KEY, currency);
   },
 };
