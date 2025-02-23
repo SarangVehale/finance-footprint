@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useTheme } from "next-themes";
 import {
   PieChart as PieChartIcon,
   TrendingUp,
@@ -37,6 +38,7 @@ const COLORS = [
 ];
 
 const Analytics = () => {
+  const { theme } = useTheme();
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [dateRange, setDateRange] = React.useState<DateRange>("month");
   const [customStartDate, setCustomStartDate] = React.useState<string>("");
@@ -250,7 +252,7 @@ const Analytics = () => {
                       <text
                         x={x}
                         y={y}
-                        fill={theme === "dark" ? "#fff" : "#333"}
+                        fill={(theme === "dark" || theme === "system") ? "#fff" : "#333"}
                         textAnchor={x > cx ? "start" : "end"}
                         dominantBaseline="central"
                       >
@@ -286,10 +288,10 @@ const Analytics = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="date"
-                  stroke={theme === "dark" ? "#fff" : "#333"}
+                  stroke={(theme === "dark" || theme === "system") ? "#fff" : "#333"}
                 />
                 <YAxis
-                  stroke={theme === "dark" ? "#fff" : "#333"}
+                  stroke={(theme === "dark" || theme === "system") ? "#fff" : "#333"}
                   tickFormatter={(value) =>
                     `${getCurrencySymbol(currency)}${value}`
                   }
