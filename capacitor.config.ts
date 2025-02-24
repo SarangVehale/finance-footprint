@@ -10,10 +10,25 @@ const config: CapacitorConfig = {
     cleartext: true
   },
   ios: {
-    contentInset: 'always'
+    contentInset: 'always',
+    scheme: 'finance-footprint',
+    backgroundColor: '#ffffff',
+    preferredContentMode: 'mobile'
   },
   android: {
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    allowMixedContent: true,
+    captureInput: true,
+    webContentsDebuggingEnabled: true
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#ffffff",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: true,
+      spinnerColor: "#22C55E"
+    }
   }
 };
 
