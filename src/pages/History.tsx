@@ -58,29 +58,29 @@ const History = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6 dark:text-white">Transaction History</h1>
+      <div className="p-6 bg-background">
+        <h1 className="text-2xl font-bold mb-6 text-foreground">Transaction History</h1>
         <div className="space-y-4">
           {transactions.map((transaction) => (
             <div
               key={transaction.id}
-              className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm flex items-center space-x-4"
+              className="bg-card p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-border"
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   transaction.type === "income"
-                    ? "bg-green-100 text-green-500"
-                    : "bg-red-100 text-red-500"
+                    ? "bg-green-100 dark:bg-green-900 text-green-500"
+                    : "bg-red-100 dark:bg-red-900 text-red-500"
                 }`}
               >
                 <DollarSign size={20} />
               </div>
               <div className="flex-1">
-                <h3 className="font-medium dark:text-white">{transaction.category}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <h3 className="font-medium text-foreground">{transaction.category}</h3>
+                <p className="text-sm text-muted-foreground">
                   {format(new Date(transaction.date), "MMM d, yyyy")}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{transaction.description}</p>
+                <p className="text-sm text-muted-foreground">{transaction.description}</p>
               </div>
               <div className="flex flex-col items-end space-y-2">
                 <p
@@ -97,13 +97,13 @@ const History = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEditTransaction(transaction)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    className="p-1 hover:bg-accent rounded-full transition-colors"
                   >
-                    <Pencil size={16} className="text-gray-500" />
+                    <Pencil size={16} className="text-muted-foreground" />
                   </button>
                   <button
                     onClick={() => handleDeleteTransaction(transaction.id)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    className="p-1 hover:bg-accent rounded-full transition-colors"
                   >
                     <Trash2 size={16} className="text-red-500" />
                   </button>
@@ -116,20 +116,20 @@ const History = () => {
         {/* Edit Transaction Modal */}
         {showEditModal && editingTransaction && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up">
+            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold dark:text-white">Edit Transaction</h2>
+                <h2 className="text-xl font-semibold text-foreground">Edit Transaction</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-accent rounded-full transition-colors"
                 >
-                  <X size={20} />
+                  <X size={20} className="text-muted-foreground" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Amount
                   </label>
                   <input
@@ -139,12 +139,12 @@ const History = () => {
                       ...editingTransaction,
                       amount: parseFloat(e.target.value)
                     })}
-                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
+                    className="w-full p-2 bg-background border border-input rounded-lg text-foreground focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Category
                   </label>
                   <select
@@ -153,7 +153,7 @@ const History = () => {
                       ...editingTransaction,
                       category: e.target.value as TransactionCategory
                     })}
-                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
+                    className="w-full p-2 bg-background border border-input rounded-lg text-foreground focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
                   >
                     <option value="Food & Dining">Food & Dining</option>
                     <option value="Transportation">Transportation</option>
@@ -169,7 +169,7 @@ const History = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Description
                   </label>
                   <input
@@ -179,7 +179,7 @@ const History = () => {
                       ...editingTransaction,
                       description: e.target.value
                     })}
-                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
+                    className="w-full p-2 bg-background border border-input rounded-lg text-foreground focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
                   />
                 </div>
 
