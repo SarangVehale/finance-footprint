@@ -66,10 +66,10 @@ const Notes = () => {
           {filteredNotes.map((note) => (
             <div
               key={note.id}
-              className="bg-card p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-card p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-border"
             >
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-medium text-card-foreground">{note.title}</h3>
+                <h3 className="font-medium text-foreground">{note.title}</h3>
                 <button
                   onClick={() => handleDeleteNote(note.id)}
                   className="text-muted-foreground hover:text-red-500 transition-colors"
@@ -109,7 +109,7 @@ const Notes = () => {
                     className={`p-2 rounded-lg transition-colors ${
                       noteType === "text"
                         ? "bg-mint-100 text-mint-600 dark:bg-mint-900 dark:text-mint-300"
-                        : "hover:bg-accent"
+                        : "hover:bg-accent text-foreground"
                     }`}
                   >
                     <FileText size={20} />
@@ -119,7 +119,7 @@ const Notes = () => {
                     className={`p-2 rounded-lg transition-colors ${
                       noteType === "checklist"
                         ? "bg-mint-100 text-mint-600 dark:bg-mint-900 dark:text-mint-300"
-                        : "hover:bg-accent"
+                        : "hover:bg-accent text-foreground"
                     }`}
                   >
                     <CheckSquare size={20} />
@@ -138,13 +138,13 @@ const Notes = () => {
                 <input
                   type="text"
                   placeholder="Title"
-                  className="w-full text-lg font-medium mb-4 bg-transparent border-none focus:outline-none text-foreground"
+                  className="w-full text-lg font-medium mb-4 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
                   value={newNote.title}
                   onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
                 />
                 <textarea
                   placeholder="Start typing..."
-                  className="w-full h-64 bg-transparent border-none focus:outline-none resize-none text-foreground"
+                  className="w-full h-64 bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground"
                   value={newNote.content}
                   onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
                 />
