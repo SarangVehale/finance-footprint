@@ -69,64 +69,64 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6 space-y-4 dark:bg-gray-900">
-        <h1 className="text-2xl font-bold mb-6 dark:text-white">Settings</h1>
+      <div className="p-6 space-y-4 bg-background">
+        <h1 className="text-2xl font-bold mb-6 text-foreground">Settings</h1>
 
         {/* Settings Menu */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm divide-y dark:divide-gray-700">
+        <div className="bg-card rounded-xl shadow-sm divide-y divide-border">
           <button
             onClick={() => setActiveModal("appearance")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
           >
             <div className="flex items-center space-x-3">
-              <Palette className="text-gray-500 dark:text-gray-400" size={20} />
-              <span className="dark:text-white">Appearance</span>
+              <Palette className="text-muted-foreground" size={20} />
+              <span className="text-foreground">Appearance</span>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
-          </button>
-
-          <button
-            onClick={() => setActiveModal("currency")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            <div className="flex items-center space-x-3">
-              <DollarSign className="text-gray-500 dark:text-gray-400" size={20} />
-              <span className="dark:text-white">Currency</span>
-            </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
 
           <button
             onClick={() => setActiveModal("categories")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
           >
             <div className="flex items-center space-x-3">
-              <Tags className="text-gray-500 dark:text-gray-400" size={20} />
-              <span className="dark:text-white">Categories</span>
+              <Tags className="text-muted-foreground" size={20} />
+              <span className="text-foreground">Categories</span>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-muted-foreground" />
+          </button>
+
+          <button
+            onClick={() => setActiveModal("currency")}
+            className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <DollarSign className="text-muted-foreground" size={20} />
+              <span className="text-foreground">Currency</span>
+            </div>
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
 
           <button
             onClick={() => setActiveModal("help")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
           >
             <div className="flex items-center space-x-3">
-              <HelpCircle className="text-gray-500 dark:text-gray-400" size={20} />
-              <span className="dark:text-white">Help & Support</span>
+              <HelpCircle className="text-muted-foreground" size={20} />
+              <span className="text-foreground">Help & Support</span>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
 
           <button
             onClick={() => setActiveModal("about")}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
           >
             <div className="flex items-center space-x-3">
-              <Info className="text-gray-500 dark:text-gray-400" size={20} />
-              <span className="dark:text-white">About</span>
+              <Info className="text-muted-foreground" size={20} />
+              <span className="text-foreground">About</span>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
 
           <div className="py-2">
@@ -136,48 +136,46 @@ const Settings = () => {
             
             <button
               onClick={() => setActiveModal("guide")}
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <Book className="text-gray-500 dark:text-gray-400" size={20} />
-                <span className="dark:text-white">User Guide</span>
+                <Book className="text-muted-foreground" size={20} />
+                <span className="text-foreground">User Guide</span>
               </div>
-              <ChevronRight size={20} className="text-gray-400" />
+              <ChevronRight size={20} className="text-muted-foreground" />
             </button>
 
             <button
               onClick={() => setActiveModal("faq")}
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <MessageCircleQuestion className="text-gray-500 dark:text-gray-400" size={20} />
-                <span className="dark:text-white">FAQs</span>
+                <MessageCircleQuestion className="text-muted-foreground" size={20} />
+                <span className="text-foreground">FAQs</span>
               </div>
-              <ChevronRight size={20} className="text-gray-400" />
+              <ChevronRight size={20} className="text-muted-foreground" />
             </button>
 
             <a
               href="https://github.com/yourusername/finance-footprint"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <Github className="text-gray-500 dark:text-gray-400" size={20} />
-                <span className="dark:text-white">GitHub Repository</span>
+                <Github className="text-muted-foreground" size={20} />
+                <span className="text-foreground">GitHub Repository</span>
               </div>
-              <ExternalLink size={16} className="text-gray-400" />
+              <ExternalLink size={16} className="text-muted-foreground" />
             </a>
           </div>
         </div>
 
-        {/* Modals */}
         {activeModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
-              {/* Modal Header */}
-              <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
-                <h2 className="text-xl font-semibold dark:text-white">
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
+            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
+              <div className="flex justify-between items-center p-4 border-b border-border">
+                <h2 className="text-xl font-semibold text-foreground">
                   {activeModal === "appearance" && "Appearance"}
                   {activeModal === "currency" && "Currency"}
                   {activeModal === "categories" && "Categories"}
@@ -188,14 +186,13 @@ const Settings = () => {
                 </h2>
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
                 >
-                  <X size={20} className="dark:text-white" />
+                  <X size={20} className="text-muted-foreground" />
                 </button>
               </div>
 
-              {/* Modal Content */}
-              <div className="p-6 dark:text-white">
+              <div className="p-4">
                 {activeModal === "appearance" && (
                   <div className="grid grid-cols-3 gap-4">
                     <button
@@ -270,12 +267,12 @@ const Settings = () => {
                         type="text"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
-                        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-mint-500 focus:border-transparent"
+                        className="flex-1 p-2 bg-background border border-input rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
                         placeholder="New category name"
                       />
                       <button
                         onClick={handleAddCategory}
-                        className="p-2 bg-mint-500 text-white rounded-lg hover:bg-mint-600 transition-colors"
+                        className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                       >
                         <Plus size={20} />
                       </button>
@@ -284,13 +281,13 @@ const Settings = () => {
                       {categories.map((category) => (
                         <div
                           key={category}
-                          className="flex justify-between items-center p-3 bg-gray-50 rounded-lg group"
+                          className="flex justify-between items-center p-3 bg-accent rounded-lg group"
                         >
-                          <span>{category}</span>
+                          <span className="text-foreground">{category}</span>
                           {category !== "Other" && (
                             <button
                               onClick={() => handleDeleteCategory(category)}
-                              className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                              className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
                             >
                               <Trash2 size={18} />
                             </button>
