@@ -69,11 +69,11 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6 space-y-4 bg-background">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Settings</h1>
+      <div className="p-6 space-y-4 dark:bg-gray-900">
+        <h1 className="text-2xl font-bold mb-6 dark:text-white">Settings</h1>
 
         {/* Settings Menu */}
-        <div className="bg-card rounded-xl shadow-sm divide-y divide-border">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm divide-y dark:divide-gray-700">
           <button
             onClick={() => setActiveModal("appearance")}
             className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -171,9 +171,11 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Modals */}
         {activeModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
             <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
+              {/* Modal Header */}
               <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
                 <h2 className="text-xl font-semibold dark:text-white">
                   {activeModal === "appearance" && "Appearance"}
@@ -192,6 +194,7 @@ const Settings = () => {
                 </button>
               </div>
 
+              {/* Modal Content */}
               <div className="p-6 dark:text-white">
                 {activeModal === "appearance" && (
                   <div className="grid grid-cols-3 gap-4">
@@ -262,13 +265,13 @@ const Settings = () => {
 
                 {activeModal === "categories" && (
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex space-x-2">
                       <input
                         type="text"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
-                        placeholder="New category"
-                        className="flex-1 p-2 border rounded-lg bg-background text-foreground border-input focus:ring-2 focus:ring-mint-500 focus:border-transparent"
+                        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-mint-500 focus:border-transparent"
+                        placeholder="New category name"
                       />
                       <button
                         onClick={handleAddCategory}
@@ -277,20 +280,21 @@ const Settings = () => {
                         <Plus size={20} />
                       </button>
                     </div>
-
                     <div className="space-y-2">
                       {categories.map((category) => (
                         <div
                           key={category}
-                          className="flex items-center justify-between p-3 bg-background rounded-lg border border-input"
+                          className="flex justify-between items-center p-3 bg-gray-50 rounded-lg group"
                         >
-                          <span className="text-foreground">{category}</span>
-                          <button
-                            onClick={() => handleDeleteCategory(category)}
-                            className="text-muted-foreground hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                          <span>{category}</span>
+                          {category !== "Other" && (
+                            <button
+                              onClick={() => handleDeleteCategory(category)}
+                              className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>

@@ -50,13 +50,13 @@ const Notes = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6 space-y-6 bg-background">
+      <div className="p-6 space-y-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
             placeholder="Search notes..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg bg-background border-input focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all text-foreground"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -66,19 +66,19 @@ const Notes = () => {
           {filteredNotes.map((note) => (
             <div
               key={note.id}
-              className="bg-card p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-border"
+              className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-medium text-foreground">{note.title}</h3>
+                <h3 className="font-medium">{note.title}</h3>
                 <button
                   onClick={() => handleDeleteNote(note.id)}
-                  className="text-muted-foreground hover:text-red-500 transition-colors"
+                  className="text-gray-400 hover:text-red-500 transition-colors"
                 >
                   <Trash size={18} />
                 </button>
               </div>
-              <p className="text-muted-foreground text-sm mb-3 whitespace-pre-wrap">{note.content}</p>
-              <div className="flex justify-between items-center text-xs text-muted-foreground">
+              <p className="text-gray-600 text-sm mb-3 whitespace-pre-wrap">{note.content}</p>
+              <div className="flex justify-between items-center text-xs text-gray-400">
                 <span>{format(new Date(note.updatedAt), "MMM d, yyyy")}</span>
                 <div className="flex items-center space-x-2">
                   {note.files?.length > 0 && <Image size={14} />}
@@ -100,16 +100,16 @@ const Notes = () => {
         {/* New Note Modal */}
         {showNewNote && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl animate-slide-up">
+            <div className="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl animate-slide-up">
               {/* Modal Header */}
-              <div className="flex justify-between items-center p-4 border-b border-border">
+              <div className="flex justify-between items-center p-4 border-b">
                 <div className="flex space-x-4">
                   <button
                     onClick={() => setNoteType("text")}
                     className={`p-2 rounded-lg transition-colors ${
                       noteType === "text"
-                        ? "bg-mint-100 text-mint-600 dark:bg-mint-900 dark:text-mint-300"
-                        : "hover:bg-accent text-foreground"
+                        ? "bg-mint-100 text-mint-600"
+                        : "hover:bg-gray-100"
                     }`}
                   >
                     <FileText size={20} />
@@ -118,8 +118,8 @@ const Notes = () => {
                     onClick={() => setNoteType("checklist")}
                     className={`p-2 rounded-lg transition-colors ${
                       noteType === "checklist"
-                        ? "bg-mint-100 text-mint-600 dark:bg-mint-900 dark:text-mint-300"
-                        : "hover:bg-accent text-foreground"
+                        ? "bg-mint-100 text-mint-600"
+                        : "hover:bg-gray-100"
                     }`}
                   >
                     <CheckSquare size={20} />
@@ -127,7 +127,7 @@ const Notes = () => {
                 </div>
                 <button
                   onClick={() => setShowNewNote(false)}
-                  className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -138,20 +138,20 @@ const Notes = () => {
                 <input
                   type="text"
                   placeholder="Title"
-                  className="w-full text-lg font-medium mb-4 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
+                  className="w-full text-lg font-medium mb-4 bg-transparent border-none focus:outline-none"
                   value={newNote.title}
                   onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
                 />
                 <textarea
                   placeholder="Start typing..."
-                  className="w-full h-64 bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground"
+                  className="w-full h-64 bg-transparent border-none focus:outline-none resize-none"
                   value={newNote.content}
                   onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
                 />
               </div>
 
               {/* Modal Footer */}
-              <div className="flex justify-end p-4 border-t border-border">
+              <div className="flex justify-end p-4 border-t">
                 <button
                   onClick={handleAddNote}
                   className="px-6 py-2 bg-mint-500 text-white rounded-lg hover:bg-mint-600 transition-colors"
