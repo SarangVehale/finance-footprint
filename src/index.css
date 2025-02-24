@@ -27,22 +27,41 @@
     --radius: 1rem;
   }
 
-  /* Safe area padding for iOS devices */
-  .h-safe-top {
-    height: env(safe-area-inset-top);
-  }
-  
-  .h-safe-bottom {
-    height: env(safe-area-inset-bottom);
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.1 76.2% 36.3%;
   }
 }
  
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-mint-500/10 selection:text-mint-500;
   }
+  
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+
+  html {
+    @apply scroll-smooth;
   }
 }
 
@@ -67,16 +86,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-200 rounded-full;
+  @apply bg-muted rounded-full;
 }
 
 /* Loading state animations */
 .loading {
-  @apply animate-pulse bg-gray-200;
+  @apply animate-pulse bg-muted;
 }
 
 /* Transaction card hover effects */
@@ -86,4 +105,29 @@ body {
 
 .transaction-card:active {
   @apply transform scale-98;
+}
+
+/* Glass morphism effects */
+.glass-morphism {
+  @apply backdrop-blur-xl bg-background/80 border border-border;
+}
+
+/* Modal backgrounds */
+.modal-background {
+  @apply fixed inset-0 bg-background/80 backdrop-blur-sm;
+}
+
+/* Input styles */
+.input-base {
+  @apply bg-background border border-input rounded-lg text-foreground focus:ring-2 focus:ring-ring focus:border-transparent transition-all;
+}
+
+/* Button styles */
+.button-base {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
+}
+
+/* Card styles */
+.card-base {
+  @apply bg-card text-card-foreground border border-border rounded-xl shadow-sm hover:shadow-md transition-all;
 }
