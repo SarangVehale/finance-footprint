@@ -1,11 +1,11 @@
-
 import React from "react";
 import { format } from "date-fns";
-import { DollarSign, Pencil, Trash2, X } from "lucide-react";
+import { DollarSign, Pencil, Trash2, X, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
 import { Transaction, TransactionCategory } from "@/types/transaction";
+import * as XLSX from 'xlsx';
 
 const History = () => {
   const { toast } = useToast();
@@ -25,6 +25,68 @@ const History = () => {
       CAD: "C$", CHF: "Fr", CNY: "¥", INR: "₹"
     };
     return symbols[currency] || currency;
+  };
+
+  const exportToExcel = () => {
+    const groupedTransactions = transactions.reduce((acc, transaction) => {
+      const monthYear = format(new Date(transaction.date), "MMMM yyyy");
+      if (!acc[monthYear]) {
+        acc[monthYear] = [];
+      }
+      acc[monthYear].push(transaction);
+      return acc;
+    }, {} as { [key: string]: Transaction[] });
+
+    const wb = XLSX.utils.book_new();
+
+    const summaryData = Object.entries(groupedTransactions).map(([monthYear, transactions]) => {
+      const income = transactions
+        .filter(t => t.type === "income")
+        .reduce((sum, t) => sum + t.amount, 0);
+      const expenses = transactions
+        .filter(t => t.type === "expense")
+        .reduce((sum, t) => sum + t.amount, 0);
+      return {
+        Month: monthYear,
+        Income: income,
+        Expenses: expenses,
+        "Net Balance": income - expenses
+      };
+    });
+
+    const summaryWs = XLSX.utils.json_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, summaryWs, "Summary");
+
+    Object.entries(groupedTransactions).forEach(([monthYear, monthTransactions]) => {
+      const sheetData = monthTransactions.map(t => ({
+        Date: format(new Date(t.date), "dd/MM/yyyy"),
+        Type: t.type.charAt(0).toUpperCase() + t.type.slice(1),
+        Category: t.category,
+        Description: t.description,
+        Amount: `${t.type === "expense" ? "-" : "+"}${getCurrencySymbol(currency)}${t.amount.toFixed(2)}`
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(sheetData);
+
+      const colWidths = [
+        { wch: 12 },
+        { wch: 10 },
+        { wch: 15 },
+        { wch: 30 },
+        { wch: 15 },
+      ];
+      ws['!cols'] = colWidths;
+
+      XLSX.utils.book_append_sheet(wb, ws, monthYear);
+    });
+
+    const fileName = `finance_history_${format(new Date(), "yyyy_MM_dd")}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+
+    toast({
+      title: "Success",
+      description: "Transaction history exported successfully",
+    });
   };
 
   const handleDeleteTransaction = (id: string) => {
@@ -59,7 +121,17 @@ const History = () => {
   return (
     <MobileLayout>
       <div className="p-6 bg-background">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Transaction History</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-foreground">Transaction History</h1>
+          <button
+            onClick={exportToExcel}
+            className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
+          >
+            <Download size={18} />
+            <span>Export</span>
+          </button>
+        </div>
+
         <div className="space-y-4">
           {transactions.map((transaction) => (
             <div
@@ -113,7 +185,6 @@ const History = () => {
           ))}
         </div>
 
-        {/* Edit Transaction Modal */}
         {showEditModal && editingTransaction && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
             <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up">
