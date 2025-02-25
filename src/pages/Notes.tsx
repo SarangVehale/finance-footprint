@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Plus, Image, Search, Tag, Trash, CheckSquare, FileText, X } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
@@ -7,6 +6,7 @@ import { Note } from "@/types/note";
 import { format } from "date-fns";
 
 const Notes = () => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const [notes, setNotes] = React.useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showNewNote, setShowNewNote] = React.useState(false);
@@ -17,10 +17,26 @@ const Notes = () => {
     checklist: [] as { text: string; checked: boolean }[]
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadedNotes = storageService.getNotes();
     setNotes(loadedNotes);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setShowNewNote(false);
+      }
+    };
+
+    if (showNewNote) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNewNote]);
 
   const handleAddNote = () => {
     if (!newNote.title && !newNote.content && newNote.checklist.length === 0) return;
@@ -67,6 +83,25 @@ const Notes = () => {
     setNotes(notes.filter((note) => note.id !== id));
   };
 
+  const handleChecklistKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const currentItem = newNote.checklist[index];
+      if (currentItem.text.trim() === '') return;
+      
+      const updatedChecklist = [...newNote.checklist];
+      updatedChecklist.splice(index + 1, 0, { text: '', checked: false });
+      setNewNote({ ...newNote, checklist: updatedChecklist });
+
+      setTimeout(() => {
+        const inputs = document.querySelectorAll('.checklist-input');
+        if (inputs[index + 1]) {
+          (inputs[index + 1] as HTMLInputElement).focus();
+        }
+      }, 0);
+    }
+  };
+
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,13 +113,13 @@ const Notes = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6 space-y-6 bg-background">
+      <div className="p-6 space-y-6 bg-background min-h-screen">
         <div className="relative animate-fade-in">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
           <input
             type="text"
             placeholder="Search notes..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg bg-background border-input focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-foreground"
+            className="w-full pl-10 pr-4 py-2 border rounded-2xl bg-background border-input focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-foreground"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -94,7 +129,7 @@ const Notes = () => {
           {filteredNotes.map((note, index) => (
             <div
               key={note.id}
-              className="card-hover bg-card p-4 rounded-xl border border-border animate-slide-in"
+              className="card-hover bg-card p-4 rounded-2xl border border-border animate-slide-in"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex justify-between items-start mb-2">
@@ -124,7 +159,7 @@ const Notes = () => {
                           storageService.saveNote(updatedNote);
                           setNotes(notes.map(n => n.id === note.id ? updatedNote : n));
                         }}
-                        className="rounded border-input"
+                        className="rounded-lg border-input"
                       />
                       <span className={`text-sm ${item.checked ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                         {item.text}
@@ -145,7 +180,6 @@ const Notes = () => {
           ))}
         </div>
 
-        {/* Floating Action Button */}
         <button
           onClick={() => setShowNewNote(true)}
           className="fixed bottom-20 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 animate-float flex items-center justify-center"
@@ -153,15 +187,17 @@ const Notes = () => {
           <Plus size={24} />
         </button>
 
-        {/* New Note Modal */}
         {showNewNote && (
           <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl animate-slide-up">
+            <div 
+              ref={modalRef}
+              className="bg-card w-full max-w-lg rounded-2xl sm:rounded-2xl animate-slide-up overflow-hidden"
+            >
               <div className="flex justify-between items-center p-4 border-b border-border">
                 <div className="flex space-x-4">
                   <button
                     onClick={() => setNoteType("text")}
-                    className={`p-2 rounded-lg transition-colors ${
+                    className={`p-2 rounded-xl transition-colors ${
                       noteType === "text"
                         ? "bg-primary/10 text-primary"
                         : "hover:bg-accent text-foreground"
@@ -171,7 +207,7 @@ const Notes = () => {
                   </button>
                   <button
                     onClick={() => setNoteType("checklist")}
-                    className={`p-2 rounded-lg transition-colors ${
+                    className={`p-2 rounded-xl transition-colors ${
                       noteType === "checklist"
                         ? "bg-primary/10 text-primary"
                         : "hover:bg-accent text-foreground"
@@ -182,7 +218,7 @@ const Notes = () => {
                 </div>
                 <button
                   onClick={() => setShowNewNote(false)}
-                  className="p-2 hover:bg-accent rounded-lg transition-colors text-foreground"
+                  className="p-2 hover:bg-accent rounded-xl transition-colors text-foreground"
                 >
                   <X size={20} />
                 </button>
@@ -212,20 +248,21 @@ const Notes = () => {
                           type="checkbox"
                           checked={item.checked}
                           onChange={() => handleToggleChecklistItem(index)}
-                          className="rounded border-input"
+                          className="rounded-lg border-input"
                         />
                         <input
                           type="text"
                           value={item.text}
                           onChange={(e) => handleChecklistItemChange(index, e.target.value)}
+                          onKeyDown={(e) => handleChecklistKeyDown(e, index)}
                           placeholder="List item..."
-                          className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
+                          className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
                         />
                       </div>
                     ))}
                     <button
                       onClick={handleAddChecklistItem}
-                      className="w-full p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center justify-center space-x-2"
+                      className="w-full p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-colors flex items-center justify-center space-x-2"
                     >
                       <Plus size={16} />
                       <span>Add item</span>
@@ -237,7 +274,7 @@ const Notes = () => {
               <div className="flex justify-end p-4 border-t border-border">
                 <button
                   onClick={handleAddNote}
-                  className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
                 >
                   Save
                 </button>
