@@ -1,3 +1,4 @@
+
 import React from "react";
 import { format } from "date-fns";
 import { DollarSign, Pencil, Trash2, X, Download } from "lucide-react";
@@ -39,6 +40,7 @@ const History = () => {
 
     const wb = XLSX.utils.book_new();
 
+    // Create summary sheet with better formatting
     const summaryData = Object.entries(groupedTransactions).map(([monthYear, transactions]) => {
       const income = transactions
         .filter(t => t.type === "income")
@@ -48,35 +50,50 @@ const History = () => {
         .reduce((sum, t) => sum + t.amount, 0);
       return {
         Month: monthYear,
-        Income: income,
-        Expenses: expenses,
-        "Net Balance": income - expenses
+        Income: `${getCurrencySymbol(currency)}${income.toFixed(2)}`,
+        Expenses: `${getCurrencySymbol(currency)}${expenses.toFixed(2)}`,
+        "Net Balance": `${getCurrencySymbol(currency)}${(income - expenses).toFixed(2)}`
       };
     });
 
     const summaryWs = XLSX.utils.json_to_sheet(summaryData);
     XLSX.utils.book_append_sheet(wb, summaryWs, "Summary");
 
+    // Create detailed monthly sheets with headers
     Object.entries(groupedTransactions).forEach(([monthYear, monthTransactions]) => {
-      const sheetData = monthTransactions.map(t => ({
-        Date: format(new Date(t.date), "dd/MM/yyyy"),
-        Type: t.type.charAt(0).toUpperCase() + t.type.slice(1),
-        Category: t.category,
-        Description: t.description,
-        Amount: `${t.type === "expense" ? "-" : "+"}${getCurrencySymbol(currency)}${t.amount.toFixed(2)}`
-      }));
-
-      const ws = XLSX.utils.json_to_sheet(sheetData);
-
-      const colWidths = [
-        { wch: 12 },
-        { wch: 10 },
-        { wch: 15 },
-        { wch: 30 },
-        { wch: 15 },
+      // Create the header row data
+      const headerRow = [
+        [monthYear],  // A1 cell with month/year
+        [],  // Empty row for spacing
+        ['Date', 'Type', 'Category', 'Description', 'Amount']  // Column headers
       ];
-      ws['!cols'] = colWidths;
 
+      // Create the transaction data
+      const transactionData = monthTransactions.map(t => [
+        format(new Date(t.date), "dd/MM/yyyy"),
+        t.type.charAt(0).toUpperCase() + t.type.slice(1),
+        t.category,
+        t.description,
+        `${t.type === "expense" ? "-" : "+"}${getCurrencySymbol(currency)}${t.amount.toFixed(2)}`
+      ]);
+
+      // Combine headers and data
+      const wsData = [...headerRow, ...transactionData];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // Style the header
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }]; // Merge cells for month header
+      
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 12 }, // Date
+        { wch: 10 }, // Type
+        { wch: 15 }, // Category
+        { wch: 30 }, // Description
+        { wch: 15 }, // Amount
+      ];
+
+      // Add the worksheet to the workbook
       XLSX.utils.book_append_sheet(wb, ws, monthYear);
     });
 
