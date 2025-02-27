@@ -89,6 +89,25 @@
   100% { transform: translateY(0px); }
 }
 
+@keyframes float-fast {
+  0% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(5deg); }
+  66% { transform: translateY(5px) rotate(-5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes float-slow {
+  0% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(-3deg); }
+  75% { transform: translateY(8px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
@@ -97,6 +116,34 @@
 @keyframes slide-in {
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes money-fall {
+  0% { 
+    transform: translateY(-10%) rotate(0deg); 
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(1000%) rotate(360deg); 
+    opacity: 0;
+  }
+}
+
+@keyframes orbit {
+  0% { 
+    transform: rotate(0deg) translateX(40px) rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg) translateX(40px) rotate(-360deg); 
+  }
 }
 
 @keyframes blob {
@@ -152,12 +199,36 @@
   animation: float 3s ease-in-out infinite;
 }
 
+.animate-float-fast {
+  animation: float-fast 2.5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+
 .animate-pulse-soft {
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
 .animate-slide-in {
   animation: slide-in 0.4s ease-out;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+.animate-money-fall {
+  animation: money-fall 8s linear infinite;
+}
+
+.animate-orbit {
+  animation: orbit 6s linear infinite;
 }
 
 .animate-blob {
@@ -180,8 +251,48 @@
   animation: dance-4 3.2s ease-in-out infinite;
 }
 
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
+.animation-delay-800 {
+  animation-delay: 0.8s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-1200 {
+  animation-delay: 1.2s;
+}
+
+.animation-delay-1400 {
+  animation-delay: 1.4s;
+}
+
+.animation-delay-1600 {
+  animation-delay: 1.6s;
+}
+
+.animation-delay-1800 {
+  animation-delay: 1.8s;
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
+}
+
+.animation-delay-2200 {
+  animation-delay: 2.2s;
 }
 
 .animation-delay-4000 {
