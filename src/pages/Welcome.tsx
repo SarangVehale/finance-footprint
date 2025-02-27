@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Wallet, ChartLineUp, Calendar, Settings } from "lucide-react";
+import { ArrowRight, Wallet, ChartLine, Calendar, Settings } from "lucide-react";
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Welcome = () => {
       description: "Keep track of your daily spending and income"
     },
     {
-      icon: <ChartLineUp className="w-12 h-12 text-primary" />,
+      icon: <ChartLine className="w-12 h-12 text-primary" />,
       title: "Analytics",
       description: "Visualize your financial patterns and trends"
     },
