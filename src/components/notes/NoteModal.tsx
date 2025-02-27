@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, FileText, CheckSquare, Plus } from 'lucide-react';
 
 interface NoteModalProps {
@@ -37,13 +37,30 @@ const NoteModal = ({
   onSave,
   modalRef
 }: NoteModalProps) => {
+  useEffect(() => {
+    if (show) {
+      // When modal opens, add class to handle virtual keyboard
+      document.body.classList.add('keyboard-open');
+      // Scroll modal into view with a delay to account for keyboard
+      setTimeout(() => {
+        modalRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      document.body.classList.remove('keyboard-open');
+    }
+
+    return () => {
+      document.body.classList.remove('keyboard-open');
+    };
+  }, [show]);
+
   if (!show) return null;
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
       <div 
         ref={modalRef}
-        className="bg-card w-full max-w-lg rounded-2xl sm:rounded-2xl animate-slide-up overflow-hidden"
+        className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl animate-slide-up overflow-hidden"
       >
         <div className="flex justify-between items-center p-4 border-b border-border">
           <div className="flex space-x-4">

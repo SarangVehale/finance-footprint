@@ -9,12 +9,13 @@ interface MobileLayoutProps {
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <main className="flex-1 overflow-y-auto pb-20">
+    <div className="flex flex-col min-h-screen bg-background">
+      <div className="h-safe-top bg-background" />
+      <main className="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-6">
-        <NavLink to="/" icon={<Home size={24} />} label="Home" />
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-6 pb-safe">
+        <NavLink to="/home" icon={<Home size={24} />} label="Home" />
         <NavLink to="/analytics" icon={<PieChart size={24} />} label="Analytics" />
         <NavLink to="/history" icon={<Clock size={24} />} label="History" />
         <NavLink to="/notes" icon={<FileText size={24} />} label="Notes" />
