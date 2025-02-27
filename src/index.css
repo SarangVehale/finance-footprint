@@ -28,24 +28,24 @@
   }
 
   .dark {
-    --background: 217 33% 17%;
+    --background: 222 33% 12%;
     --foreground: 210 40% 98%;
-    --card: 217 33% 17%;
+    --card: 222 33% 14%;
     --card-foreground: 210 40% 98%;
-    --popover: 217 33% 17%;
+    --popover: 222 33% 14%;
     --popover-foreground: 210 40% 98%;
     --primary: 164 75% 42%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 217 33% 20%;
+    --secondary: 222 33% 18%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 20%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217 33% 22%;
+    --muted: 222 33% 18%;
+    --muted-foreground: 215 20.2% 70%;
+    --accent: 222 33% 20%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
+    --destructive: 0 63% 35%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 25%;
-    --input: 217 33% 25%;
+    --border: 222 33% 25%;
+    --input: 222 33% 25%;
     --ring: 164 75% 42%;
   }
 }
@@ -358,4 +358,24 @@
   opacity: 1;
   transform: translateX(0);
   transition: opacity 300ms, transform 300ms;
+}
+
+/* Responsive utils */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .padding-responsive {
+    padding: 0.75rem;
+  }
+}
+
+/* Dark mode enhancements */
+.dark .glass-dark {
+  @apply bg-background/30 backdrop-blur-lg border border-white/5;
+}
+
+.dark .neo-glow {
+  box-shadow: 0 0 15px 2px rgba(42, 157, 143, 0.15);
 }

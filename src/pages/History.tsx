@@ -137,43 +137,45 @@ const History = () => {
 
   return (
     <MobileLayout>
-      <div className="p-6 bg-background">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-foreground">Transaction History</h1>
+      <div className="p-4 sm:p-6 bg-background">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Transaction History</h1>
           <button
             onClick={exportToExcel}
-            className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
+            className="flex items-center space-x-1 sm:space-x-2 px-2 py-1.5 sm:px-4 sm:py-2 bg-primary text-primary-foreground rounded-lg sm:rounded-xl text-xs sm:text-base hover:bg-primary/90 transition-colors"
           >
-            <Download size={18} />
-            <span>Export</span>
+            <Download size={16} className="sm:hidden" />
+            <Download size={18} className="hidden sm:block" />
+            <span className="hidden xs:inline">Export</span>
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {transactions.map((transaction) => (
             <div
               key={transaction.id}
-              className="bg-card p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-border"
+              className="bg-card p-3 sm:p-4 rounded-lg sm:rounded-xl shadow-sm flex items-center space-x-3 sm:space-x-4 border border-border"
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                   transaction.type === "income"
-                    ? "bg-green-100 dark:bg-green-900 text-green-500"
-                    : "bg-red-100 dark:bg-red-900 text-red-500"
+                    ? "bg-green-100 dark:bg-green-900/50 text-green-500"
+                    : "bg-red-100 dark:bg-red-900/50 text-red-500"
                 }`}
               >
-                <DollarSign size={20} />
+                <DollarSign size={16} className="sm:hidden" />
+                <DollarSign size={20} className="hidden sm:block" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-foreground">{transaction.category}</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-foreground text-sm sm:text-base truncate">{transaction.category}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {format(new Date(transaction.date), "MMM d, yyyy")}
                 </p>
-                <p className="text-sm text-muted-foreground">{transaction.description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">{transaction.description}</p>
               </div>
-              <div className="flex flex-col items-end space-y-2">
+              <div className="flex flex-col items-end space-y-1 sm:space-y-2">
                 <p
-                  className={`font-semibold ${
+                  className={`font-semibold text-sm sm:text-base ${
                     transaction.type === "income"
                       ? "text-green-500"
                       : "text-red-500"
@@ -183,35 +185,44 @@ const History = () => {
                   {getCurrencySymbol(currency)}
                   {transaction.amount.toFixed(2)}
                 </p>
-                <div className="flex space-x-2">
+                <div className="flex space-x-1 sm:space-x-2">
                   <button
                     onClick={() => handleEditTransaction(transaction)}
                     className="p-1 hover:bg-accent rounded-full transition-colors"
                   >
-                    <Pencil size={16} className="text-muted-foreground" />
+                    <Pencil size={14} className="sm:hidden text-muted-foreground" />
+                    <Pencil size={16} className="hidden sm:block text-muted-foreground" />
                   </button>
                   <button
                     onClick={() => handleDeleteTransaction(transaction.id)}
                     className="p-1 hover:bg-accent rounded-full transition-colors"
                   >
-                    <Trash2 size={16} className="text-red-500" />
+                    <Trash2 size={14} className="sm:hidden text-red-500" />
+                    <Trash2 size={16} className="hidden sm:block text-red-500" />
                   </button>
                 </div>
               </div>
             </div>
           ))}
+
+          {transactions.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No transactions yet</p>
+            </div>
+          )}
         </div>
 
         {showEditModal && editingTransaction && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Edit Transaction</h2>
+            <div className="bg-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-6 animate-slide-up">
+              <div className="flex justify-between items-center mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Edit Transaction</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-accent rounded-full transition-colors"
+                  className="p-1.5 sm:p-2 hover:bg-accent rounded-full transition-colors"
                 >
-                  <X size={20} className="text-muted-foreground" />
+                  <X size={18} className="sm:hidden text-muted-foreground" />
+                  <X size={20} className="hidden sm:block text-muted-foreground" />
                 </button>
               </div>
 
@@ -273,7 +284,7 @@ const History = () => {
 
                 <button
                   onClick={handleUpdateTransaction}
-                  className="w-full py-3 rounded-lg bg-mint-500 text-white font-medium hover:bg-mint-600 transition-all"
+                  className="w-full py-2.5 sm:py-3 rounded-lg bg-mint-500 text-white font-medium hover:bg-mint-600 transition-all"
                 >
                   Update Transaction
                 </button>
