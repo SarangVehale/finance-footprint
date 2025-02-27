@@ -65,6 +65,7 @@ const Settings = () => {
   const handleCurrencyChange = (newCurrency: string) => {
     setCurrency(newCurrency);
     storageService.setCurrency(newCurrency);
+    setActiveModal(null); // Auto-close the modal
   };
 
   return (
@@ -193,6 +194,35 @@ const Settings = () => {
               </div>
 
               <div className="p-4">
+                {activeModal === "currency" && (
+                  <div className="space-y-4">
+                    {["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR"].map((curr) => (
+                      <button
+                        key={curr}
+                        onClick={() => handleCurrencyChange(curr)}
+                        className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
+                          currency === curr
+                            ? "bg-mint-50 text-mint-500"
+                            : "hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                      >
+                        <span>{curr}</span>
+                        <span className="text-gray-500 dark:text-gray-400">
+                          {curr === "USD" && "$"}
+                          {curr === "EUR" && "€"}
+                          {curr === "GBP" && "£"}
+                          {curr === "JPY" && "¥"}
+                          {curr === "AUD" && "A$"}
+                          {curr === "CAD" && "C$"}
+                          {curr === "CHF" && "Fr"}
+                          {curr === "CNY" && "¥"}
+                          {curr === "INR" && "₹"}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {activeModal === "appearance" && (
                   <div className="grid grid-cols-3 gap-4">
                     <button
@@ -228,35 +258,6 @@ const Settings = () => {
                       <Monitor size={24} />
                       <span className="mt-2 text-sm">System</span>
                     </button>
-                  </div>
-                )}
-
-                {activeModal === "currency" && (
-                  <div className="space-y-4">
-                    {["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR"].map((curr) => (
-                      <button
-                        key={curr}
-                        onClick={() => handleCurrencyChange(curr)}
-                        className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
-                          currency === curr
-                            ? "bg-mint-50 text-mint-500"
-                            : "hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>{curr}</span>
-                        <span className="text-gray-500">
-                          {curr === "USD" && "$"}
-                          {curr === "EUR" && "€"}
-                          {curr === "GBP" && "£"}
-                          {curr === "JPY" && "¥"}
-                          {curr === "AUD" && "A$"}
-                          {curr === "CAD" && "C$"}
-                          {curr === "CHF" && "Fr"}
-                          {curr === "CNY" && "¥"}
-                          {curr === "INR" && "₹"}
-                        </span>
-                      </button>
-                    ))}
                   </div>
                 )}
 
