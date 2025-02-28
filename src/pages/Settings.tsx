@@ -21,7 +21,10 @@ import {
   MessageCircleQuestion,
   ExternalLink,
   Lightbulb,
-  GraduationCap
+  GraduationCap,
+  PieChart,
+  TrendingDown,
+  Play
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
