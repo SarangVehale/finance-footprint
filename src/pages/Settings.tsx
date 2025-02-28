@@ -19,7 +19,10 @@ import {
   Github,
   Book,
   MessageCircleQuestion,
-  ExternalLink
+  ExternalLink,
+  Mail,
+  MessageSquare,
+  PhoneCall
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
@@ -71,14 +74,14 @@ const Settings = () => {
 
   return (
     <MobileLayout>
-      <div className="p-4 sm:p-6 space-y-4 bg-background">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground">Settings</h1>
+      <div className="p-4 sm:p-6 space-y-4 bg-background pt-safe-top">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground animate-fade-in">Settings</h1>
 
         {/* Settings Menu */}
-        <div className="bg-card rounded-xl shadow-sm divide-y divide-border">
+        <div className="bg-card rounded-xl shadow-sm divide-y divide-border animate-fade-in">
           <button
             onClick={() => setActiveModal("appearance")}
-            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors rounded-t-xl"
           >
             <div className="flex items-center space-x-3">
               <Palette className="text-muted-foreground" size={18} />
@@ -122,7 +125,7 @@ const Settings = () => {
 
           <button
             onClick={() => setActiveModal("about")}
-            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors rounded-b-xl"
           >
             <div className="flex items-center space-x-3">
               <Info className="text-muted-foreground" size={18} />
@@ -195,14 +198,14 @@ const Settings = () => {
                 </button>
               </div>
 
-              <div className="p-4">
+              <div className="p-4 max-h-[80vh] overflow-y-auto">
                 {activeModal === "currency" && (
                   <div className="space-y-3 sm:space-y-4">
                     {["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR"].map((curr) => (
                       <button
                         key={curr}
                         onClick={() => handleCurrencyChange(curr)}
-                        className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-lg transition-all ${
+                        className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
                           currency === curr
                             ? "bg-mint-50 dark:bg-mint-900/20 text-mint-500"
                             : "hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -228,46 +231,46 @@ const Settings = () => {
                 {activeModal === "appearance" && (
                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     <button
-                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 ${
+                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 hover:scale-[1.05] active:scale-[0.98] ${
                         theme === "light"
                           ? "border-mint-500 bg-mint-50 dark:bg-mint-900/20 text-mint-500"
                           : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                       onClick={() => handleThemeChange("light")}
                     >
-                      <Sun size={20} className="sm:hidden" />
-                      <Sun size={24} className="hidden sm:block" />
+                      <Sun size={20} className="sm:hidden animate-spin-slow" />
+                      <Sun size={24} className="hidden sm:block animate-spin-slow" />
                       <span className="mt-2 text-xs sm:text-sm">Light</span>
                     </button>
                     <button
-                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 ${
+                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 hover:scale-[1.05] active:scale-[0.98] ${
                         theme === "dark"
                           ? "border-mint-500 bg-mint-50 dark:bg-mint-900/20 text-mint-500"
                           : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                       onClick={() => handleThemeChange("dark")}
                     >
-                      <Moon size={20} className="sm:hidden" />
-                      <Moon size={24} className="hidden sm:block" />
+                      <Moon size={20} className="sm:hidden animate-float-slow" />
+                      <Moon size={24} className="hidden sm:block animate-float-slow" />
                       <span className="mt-2 text-xs sm:text-sm">Dark</span>
                     </button>
                     <button
-                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 ${
+                      className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border transition-all duration-300 hover:scale-[1.05] active:scale-[0.98] ${
                         theme === "system"
                           ? "border-mint-500 bg-mint-50 dark:bg-mint-900/20 text-mint-500"
                           : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                       onClick={() => handleThemeChange("system")}
                     >
-                      <Monitor size={20} className="sm:hidden" />
-                      <Monitor size={24} className="hidden sm:block" />
+                      <Monitor size={20} className="sm:hidden animate-pulse-soft" />
+                      <Monitor size={24} className="hidden sm:block animate-pulse-soft" />
                       <span className="mt-2 text-xs sm:text-sm">System</span>
                     </button>
                   </div>
                 )}
 
                 {activeModal === "categories" && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-[60vh]">
                     <div className="flex space-x-2">
                       <input
                         type="text"
@@ -278,22 +281,23 @@ const Settings = () => {
                       />
                       <button
                         onClick={handleAddCategory}
-                        className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                        className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors hover:scale-105 active:scale-95"
                       >
                         <Plus size={18} />
                       </button>
                     </div>
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                      {categories.map((category) => (
+                      {categories.map((category, index) => (
                         <div
                           key={category}
-                          className="flex justify-between items-center p-2.5 sm:p-3 bg-accent rounded-lg group"
+                          className="flex justify-between items-center p-2.5 sm:p-3 bg-accent rounded-lg group hover:bg-accent/80 transition-all animate-fade-in"
+                          style={{ animationDelay: `${index * 50}ms` }}
                         >
                           <span className="text-foreground text-sm sm:text-base">{category}</span>
                           {category !== "Other" && (
                             <button
                               onClick={() => handleDeleteCategory(category)}
-                              className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                              className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-90"
                             >
                               <Trash2 size={16} className="sm:hidden" />
                               <Trash2 size={18} className="hidden sm:block" />
@@ -302,6 +306,85 @@ const Settings = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {activeModal === "help" && (
+                  <div className="space-y-6 sm:space-y-8 overflow-y-auto max-h-[60vh] pr-2">
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium text-foreground">Contact Support</h3>
+                      <div className="space-y-3">
+                        <a
+                          href="mailto:support@financefootprint.com"
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Mail size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">Email Support</h4>
+                            <p className="text-sm text-muted-foreground">support@financefootprint.com</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#"
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <MessageSquare size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">Live Chat</h4>
+                            <p className="text-sm text-muted-foreground">Available 9am-5pm Mon-Fri</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href="tel:+18001234567"
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <PhoneCall size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">Phone Support</h4>
+                            <p className="text-sm text-muted-foreground">+1 (800) 123-4567</p>
+                          </div>
+                        </a>
+                      </div>
+                    </section>
+
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium text-foreground">Community Support</h3>
+                      <div className="space-y-3">
+                        <a
+                          href="#"
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Users size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">Community Forum</h4>
+                            <p className="text-sm text-muted-foreground">Join our supportive community</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#"
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <FileText size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">Tutorials & Guides</h4>
+                            <p className="text-sm text-muted-foreground">Step-by-step instructions</p>
+                          </div>
+                        </a>
+                      </div>
+                    </section>
                   </div>
                 )}
 
@@ -372,7 +455,7 @@ const Settings = () => {
                 {activeModal === "about" && (
                   <div className="space-y-4">
                     <div className="text-center">
-                      <h3 className="text-xl sm:text-2xl font-bold text-mint-500">Finance Footprint</h3>
+                      <h3 className="text-xl sm:text-2xl font-bold text-mint-500 animate-float-slow">Finance Footprint</h3>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">Version 1.0.0</p>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 text-center text-sm sm:text-base">

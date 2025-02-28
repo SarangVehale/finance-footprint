@@ -14,7 +14,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
       <main className="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40">
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-xl shadow-sm">
         <NavLink to="/home" icon={<Home className="w-5 h-5 sm:w-6 sm:h-6" />} label="Home" />
         <NavLink to="/analytics" icon={<PieChart className="w-5 h-5 sm:w-6 sm:h-6" />} label="Analytics" />
         <NavLink to="/history" icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />} label="History" />
@@ -37,13 +37,15 @@ const NavLink: React.FC<NavLinkProps> = ({ to, icon, label }) => {
   return (
     <Link
       to={to}
-      className={`flex flex-col items-center justify-center space-y-1 transition-colors ${
+      className={`flex flex-col items-center justify-center space-y-1 transition-all duration-200 rounded-lg p-2 hover:bg-accent/50 ${
         isActive 
-          ? "text-mint-500" 
+          ? "text-mint-500 scale-105" 
           : "text-muted-foreground hover:text-mint-400"
       }`}
     >
-      {icon}
+      <div className={`transition-transform duration-300 ${isActive ? "animate-bounce-gentle" : ""}`}>
+        {icon}
+      </div>
       <span className="text-xs font-medium">{label}</span>
     </Link>
   );

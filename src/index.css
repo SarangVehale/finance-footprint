@@ -158,7 +158,7 @@
 
 @keyframes bounce-gentle {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-5px); }
 }
 
 @keyframes pulse-soft {
@@ -176,76 +176,14 @@
   100% { transform: rotate(360deg); }
 }
 
-@keyframes money-fall {
-  0% { 
-    transform: translateY(-10%) rotate(0deg); 
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  100% { 
-    transform: translateY(1000%) rotate(360deg); 
-    opacity: 0;
-  }
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes orbit {
-  0% { 
-    transform: rotate(0deg) translateX(40px) rotate(0deg); 
-  }
-  100% { 
-    transform: rotate(360deg) translateX(40px) rotate(-360deg); 
-  }
-}
-
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
-/* Dancing money animations */
-@keyframes dance-1 {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(10px, -15px) rotate(10deg); }
-  40% { transform: translate(-5px, -25px) rotate(-15deg); }
-  60% { transform: translate(-15px, -5px) rotate(10deg); }
-  80% { transform: translate(5px, 10px) rotate(-5deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-@keyframes dance-2 {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(-10px, 15px) rotate(-10deg); }
-  50% { transform: translate(5px, 20px) rotate(15deg); }
-  75% { transform: translate(12px, -10px) rotate(-8deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-@keyframes dance-3 {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  30% { transform: translate(15px, -10px) rotate(12deg) scale(1.1); }
-  60% { transform: translate(-12px, -15px) rotate(-15deg) scale(0.9); }
-  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-}
-
-@keyframes dance-4 {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-8px, 10px) rotate(-10deg); }
-  40% { transform: translate(12px, 15px) rotate(15deg); }
-  60% { transform: translate(7px, -12px) rotate(5deg); }
-  80% { transform: translate(-10px, -8px) rotate(-8deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .animate-float {
@@ -273,35 +211,15 @@
 }
 
 .animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
+  animation: spin-slow 12s linear infinite;
 }
 
-.animate-money-fall {
-  animation: money-fall 8s linear infinite;
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
 }
 
-.animate-orbit {
-  animation: orbit 6s linear infinite;
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animate-dance-1 {
-  animation: dance-1 3s ease-in-out infinite;
-}
-
-.animate-dance-2 {
-  animation: dance-2 3.5s ease-in-out infinite;
-}
-
-.animate-dance-3 {
-  animation: dance-3 4s ease-in-out infinite;
-}
-
-.animate-dance-4 {
-  animation: dance-4 3.2s ease-in-out infinite;
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
 
 .animation-delay-200 {
@@ -322,115 +240,6 @@
 
 .animation-delay-1000 {
   animation-delay: 1s;
-}
-
-.animation-delay-1200 {
-  animation-delay: 1.2s;
-}
-
-.animation-delay-1400 {
-  animation-delay: 1.4s;
-}
-
-.animation-delay-1600 {
-  animation-delay: 1.6s;
-}
-
-.animation-delay-1800 {
-  animation-delay: 1.8s;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-2200 {
-  animation-delay: 2.2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Loading animations */
-.loading-shimmer {
-  @apply relative overflow-hidden;
-}
-
-.loading-shimmer::after {
-  @apply absolute inset-0;
-  content: '';
-  background: linear-gradient(90deg, 
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transform: translateX(-100%);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
-}
-
-/* Enhanced card transitions */
-.card-hover {
-  @apply transition-all duration-300 ease-out;
-  transform-style: preserve-3d;
-}
-
-.card-hover:hover {
-  @apply shadow-lg;
-  transform: translateY(-5px) scale(1.01);
-}
-
-/* Glass morphism */
-.glass {
-  @apply bg-background/80 backdrop-blur-lg border border-border/50;
-}
-
-/* Component animations */
-.fade-enter {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.fade-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-/* List item animations */
-.list-item-enter {
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-.list-item-enter-active {
-  opacity: 1;
-  transform: translateX(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-/* Responsive utils */
-@media (max-width: 640px) {
-  .text-responsive {
-    font-size: 0.875rem;
-  }
-  
-  .padding-responsive {
-    padding: 0.75rem;
-  }
-}
-
-/* Dark mode enhancements */
-.dark .glass-dark {
-  @apply bg-background/30 backdrop-blur-lg border border-white/5;
-}
-
-.dark .neo-glow {
-  box-shadow: 0 0 15px 2px rgba(42, 157, 143, 0.15);
 }
 
 /* Mobile optimizations */
@@ -468,7 +277,33 @@
     border-top: 1px solid var(--border);
   }
   
+  /* Adjust positioning for navigation bars */
   .bottom-safe {
     bottom: calc(4rem + env(safe-area-inset-bottom));
   }
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s ease;
+}
+
+.btn-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-hover:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
