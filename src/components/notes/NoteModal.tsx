@@ -17,6 +17,7 @@ interface NoteModalProps {
   onChecklistItemToggle: (index: number) => void;
   onChecklistKeyDown: (e: React.KeyboardEvent, index: number) => void;
   onSave: () => void;
+  autoSave?: boolean;
   modalRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -35,6 +36,7 @@ const NoteModal = ({
   onChecklistItemToggle,
   onChecklistKeyDown,
   onSave,
+  autoSave = false,
   modalRef
 }: NoteModalProps) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
@@ -94,13 +96,14 @@ const NoteModal = ({
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
       <div 
         ref={modalRef}
-        className="bg-card w-full h-full sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col"
+        className="bg-card w-full h-[calc(100%-env(safe-area-inset-top))] sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col pt-safe-top pb-safe-bottom"
       >
         <div className="flex justify-between items-center p-4 border-b border-border">
           {isMobile ? (
             <button
               onClick={onClose}
               className="p-2 hover:bg-accent rounded-xl transition-colors text-foreground"
+              aria-label="Close"
             >
               <ArrowLeft size={20} />
             </button>
@@ -114,6 +117,7 @@ const NoteModal = ({
                   ? "bg-primary/10 text-primary"
                   : "hover:bg-accent text-foreground"
               }`}
+              aria-label="Text note"
             >
               <FileText size={20} />
             </button>
@@ -124,6 +128,7 @@ const NoteModal = ({
                   ? "bg-primary/10 text-primary"
                   : "hover:bg-accent text-foreground"
               }`}
+              aria-label="Checklist note"
             >
               <CheckSquare size={20} />
             </button>
@@ -133,6 +138,7 @@ const NoteModal = ({
             <button
               onClick={onClose}
               className="p-2 hover:bg-accent rounded-xl transition-colors text-foreground"
+              aria-label="Close"
             >
               <X size={20} />
             </button>
@@ -187,14 +193,12 @@ const NoteModal = ({
           )}
         </div>
 
-        <div className="flex justify-end p-4 border-t border-border mt-auto">
-          <button
-            onClick={onSave}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
-          >
-            Save
-          </button>
-        </div>
+        {/* Auto-saving indicator at the bottom */}
+        {autoSave && (
+          <div className="flex items-center justify-center p-2 border-t border-border mt-auto text-xs text-muted-foreground">
+            Auto-saving...
+          </div>
+        )}
       </div>
     </div>
   );

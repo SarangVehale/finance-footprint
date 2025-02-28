@@ -6,7 +6,7 @@ import { Note } from '@/types/note';
 
 interface NoteCardProps {
   note: Note;
-  onDelete: (id: string) => void;
+  onDelete: (e: React.MouseEvent) => void;
   onToggleCheckItem: (noteId: string, index: number, checked: boolean) => void;
 }
 
@@ -16,7 +16,7 @@ const NoteCard = ({ note, onDelete, onToggleCheckItem }: NoteCardProps) => {
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-foreground">{note.title}</h3>
         <button
-          onClick={() => onDelete(note.id)}
+          onClick={onDelete}
           className="text-muted-foreground hover:text-red-500 transition-colors"
         >
           <Trash size={18} />
