@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
 import { Note } from "@/types/note";
