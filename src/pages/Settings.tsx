@@ -20,16 +20,15 @@ import {
   Book,
   MessageCircleQuestion,
   ExternalLink,
-  Mail,
-  MessageSquare,
-  PhoneCall
+  Lightbulb,
+  GraduationCap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import { Transaction, TransactionCategory } from "@/types/transaction";
 import { storageService } from "@/services/localStorage";
 
-type ModalType = "appearance" | "currency" | "categories" | "help" | "about" | "docs" | "guide" | "faq" | null;
+type ModalType = "appearance" | "currency" | "categories" | "help" | "about" | "docs" | "guide" | "faq" | "forum" | "tutorials" | null;
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -160,6 +159,28 @@ const Settings = () => {
               </div>
               <ChevronRight size={18} className="text-muted-foreground" />
             </button>
+            
+            <button
+              onClick={() => setActiveModal("forum")}
+              className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <Users className="text-muted-foreground" size={18} />
+                <span className="text-foreground text-sm sm:text-base">Community Forum</span>
+              </div>
+              <ChevronRight size={18} className="text-muted-foreground" />
+            </button>
+            
+            <button
+              onClick={() => setActiveModal("tutorials")}
+              className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <GraduationCap className="text-muted-foreground" size={18} />
+                <span className="text-foreground text-sm sm:text-base">Tutorials & Guides</span>
+              </div>
+              <ChevronRight size={18} className="text-muted-foreground" />
+            </button>
 
             <a
               href="https://github.com/SarangVehale/finance-footprint"
@@ -188,6 +209,8 @@ const Settings = () => {
                   {activeModal === "about" && "About"}
                   {activeModal === "guide" && "User Guide"}
                   {activeModal === "faq" && "Frequently Asked Questions"}
+                  {activeModal === "forum" && "Community Forum"}
+                  {activeModal === "tutorials" && "Tutorials & Guides"}
                 </h2>
                 <button
                   onClick={() => setActiveModal(null)}
@@ -312,77 +335,277 @@ const Settings = () => {
                 {activeModal === "help" && (
                   <div className="space-y-6 sm:space-y-8 overflow-y-auto max-h-[60vh] pr-2">
                     <section className="space-y-4">
-                      <h3 className="text-base sm:text-lg font-medium text-foreground">Contact Support</h3>
+                      <h3 className="text-base sm:text-lg font-medium text-foreground">GitHub Resources</h3>
                       <div className="space-y-3">
                         <a
-                          href="mailto:support@financefootprint.com"
+                          href="https://github.com/SarangVehale/finance-footprint"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Mail size={20} className="text-primary" />
+                            <Github size={20} className="text-primary" />
                           </div>
                           <div>
-                            <h4 className="font-medium text-foreground">Email Support</h4>
-                            <p className="text-sm text-muted-foreground">support@financefootprint.com</p>
+                            <h4 className="font-medium text-foreground">GitHub Repository</h4>
+                            <p className="text-sm text-muted-foreground">Browse the source code</p>
                           </div>
                         </a>
 
                         <a
-                          href="#"
+                          href="https://github.com/SarangVehale/finance-footprint/issues"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <MessageSquare size={20} className="text-primary" />
+                            <MessageCircleQuestion size={20} className="text-primary" />
                           </div>
                           <div>
-                            <h4 className="font-medium text-foreground">Live Chat</h4>
-                            <p className="text-sm text-muted-foreground">Available 9am-5pm Mon-Fri</p>
-                          </div>
-                        </a>
-
-                        <a
-                          href="tel:+18001234567"
-                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <PhoneCall size={20} className="text-primary" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-foreground">Phone Support</h4>
-                            <p className="text-sm text-muted-foreground">+1 (800) 123-4567</p>
+                            <h4 className="font-medium text-foreground">GitHub Issues</h4>
+                            <p className="text-sm text-muted-foreground">Report bugs or request features</p>
                           </div>
                         </a>
                       </div>
                     </section>
 
                     <section className="space-y-4">
-                      <h3 className="text-base sm:text-lg font-medium text-foreground">Community Support</h3>
+                      <h3 className="text-base sm:text-lg font-medium text-foreground">Additional Resources</h3>
                       <div className="space-y-3">
-                        <a
-                          href="#"
-                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        <button
+                          onClick={() => setActiveModal("forum")}
+                          className="w-full flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <Users size={20} className="text-primary" />
                           </div>
-                          <div>
+                          <div className="text-left">
                             <h4 className="font-medium text-foreground">Community Forum</h4>
                             <p className="text-sm text-muted-foreground">Join our supportive community</p>
                           </div>
-                        </a>
+                        </button>
 
-                        <a
-                          href="#"
-                          className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        <button
+                          onClick={() => setActiveModal("tutorials")}
+                          className="w-full flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <FileText size={20} className="text-primary" />
+                            <GraduationCap size={20} className="text-primary" />
                           </div>
-                          <div>
+                          <div className="text-left">
                             <h4 className="font-medium text-foreground">Tutorials & Guides</h4>
                             <p className="text-sm text-muted-foreground">Step-by-step instructions</p>
                           </div>
+                        </button>
+                      </div>
+                    </section>
+                  </div>
+                )}
+
+                {activeModal === "forum" && (
+                  <div className="space-y-6 sm:space-y-8 overflow-y-auto max-h-[60vh] pr-2">
+                    <section>
+                      <div className="rounded-xl bg-primary/5 p-5 mb-6 text-center">
+                        <Users className="w-12 h-12 mx-auto text-primary mb-3 animate-float-slow" />
+                        <h3 className="text-lg font-medium mb-2">Finance Footprint Community</h3>
+                        <p className="text-muted-foreground text-sm mb-4">Join our growing community of users to share tips, ask questions, and get help</p>
+                        <a 
+                          href="https://community.financefootprint.com" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                          Join Community
+                          <ExternalLink size={14} className="ml-2" />
                         </a>
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Popular Discussion Categories</h3>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {[
+                          { title: "Budgeting Tips", count: 124, icon: <DollarSign size={16} /> },
+                          { title: "App Features", count: 89, icon: <Lightbulb size={16} /> },
+                          { title: "Investing", count: 76, icon: <PieChart size={16} /> },
+                          { title: "Debt Reduction", count: 52, icon: <TrendingDown size={16} /> }
+                        ].map((category, index) => (
+                          <div 
+                            key={index}
+                            className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100}ms` }}
+                          >
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="text-primary">{category.icon}</span>
+                              <span className="font-medium">{category.title}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">{category.count} discussions</p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Recent Discussions</h3>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            title: "How to categorize subscriptions?",
+                            author: "JaneDoe",
+                            replies: 8,
+                            time: "2 hours ago"
+                          },
+                          {
+                            title: "Best way to track shared expenses",
+                            author: "FinanceGuru",
+                            replies: 12,
+                            time: "Yesterday"
+                          },
+                          {
+                            title: "Feature request: multiple currencies",
+                            author: "Traveler22",
+                            replies: 5,
+                            time: "3 days ago"
+                          }
+                        ].map((discussion, index) => (
+                          <div 
+                            key={index} 
+                            className="p-3 border-b border-border last:border-0 hover:bg-accent/30 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100 + 300}ms` }}
+                          >
+                            <h4 className="font-medium mb-1">{discussion.title}</h4>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>by {discussion.author}</span>
+                              <div className="flex items-center space-x-3">
+                                <span>{discussion.replies} replies</span>
+                                <span>{discussion.time}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  </div>
+                )}
+
+                {activeModal === "tutorials" && (
+                  <div className="space-y-6 sm:space-y-8 overflow-y-auto max-h-[60vh] pr-2">
+                    <section>
+                      <div className="rounded-xl bg-primary/5 p-5 mb-6 text-center">
+                        <GraduationCap className="w-12 h-12 mx-auto text-primary mb-3 animate-float-slow" />
+                        <h3 className="text-lg font-medium mb-2">Tutorials & Guides</h3>
+                        <p className="text-muted-foreground text-sm mb-4">Learn how to make the most of Finance Footprint with our step-by-step guides</p>
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Getting Started</h3>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            title: "Setting Up Your Account",
+                            description: "Learn how to create and configure your account",
+                            time: "5 min read",
+                            difficulty: "Beginner"
+                          },
+                          {
+                            title: "Adding Your First Transaction",
+                            description: "Step-by-step guide to recording transactions",
+                            time: "3 min read",
+                            difficulty: "Beginner"
+                          },
+                          {
+                            title: "Understanding the Dashboard",
+                            description: "Overview of all the main features and screens",
+                            time: "7 min read",
+                            difficulty: "Beginner"
+                          }
+                        ].map((tutorial, index) => (
+                          <div 
+                            key={index}
+                            className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100}ms` }}
+                          >
+                            <h4 className="font-medium mb-1">{tutorial.title}</h4>
+                            <p className="text-sm text-muted-foreground mb-2">{tutorial.description}</p>
+                            <div className="flex items-center space-x-3 text-xs">
+                              <span className="px-2 py-1 bg-primary/10 text-primary rounded-full">{tutorial.difficulty}</span>
+                              <span className="text-muted-foreground">{tutorial.time}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Advanced Features</h3>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            title: "Creating Custom Categories",
+                            description: "Organize your finances with personalized categories",
+                            time: "4 min read",
+                            difficulty: "Intermediate"
+                          },
+                          {
+                            title: "Analyzing Your Spending Patterns",
+                            description: "Get insights into your financial habits using analytics",
+                            time: "6 min read",
+                            difficulty: "Intermediate"
+                          },
+                          {
+                            title: "Setting Budgets and Goals",
+                            description: "Learn how to plan and track your financial goals",
+                            time: "8 min read",
+                            difficulty: "Advanced"
+                          }
+                        ].map((tutorial, index) => (
+                          <div 
+                            key={index}
+                            className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100 + 300}ms` }}
+                          >
+                            <h4 className="font-medium mb-1">{tutorial.title}</h4>
+                            <p className="text-sm text-muted-foreground mb-2">{tutorial.description}</p>
+                            <div className="flex items-center space-x-3 text-xs">
+                              <span className="px-2 py-1 bg-primary/10 text-primary rounded-full">{tutorial.difficulty}</span>
+                              <span className="text-muted-foreground">{tutorial.time}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Video Tutorials</h3>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            title: "Complete App Walkthrough",
+                            description: "Full overview of all app features and functionality",
+                            time: "15 min video",
+                          },
+                          {
+                            title: "Creating Reports and Exports",
+                            description: "How to generate and share financial reports",
+                            time: "8 min video",
+                          }
+                        ].map((video, index) => (
+                          <div 
+                            key={index}
+                            className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in flex items-center space-x-3"
+                            style={{ animationDelay: `${index * 100 + 600}ms` }}
+                          >
+                            <div className="w-12 h-12 flex-shrink-0 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                              <Play size={20} />
+                            </div>
+                            <div>
+                              <h4 className="font-medium mb-1">{video.title}</h4>
+                              <p className="text-sm text-muted-foreground mb-1">{video.description}</p>
+                              <span className="text-xs text-muted-foreground">{video.time}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </section>
                   </div>
