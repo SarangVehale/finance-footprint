@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -75,11 +74,35 @@
   /* Handle virtual keyboard */
   body.keyboard-open {
     height: -webkit-fill-available;
+    position: fixed;
+    width: 100%;
     overflow: hidden;
   }
   
   body.keyboard-open .fixed {
     position: absolute;
+  }
+
+  /* Prevent content from being hidden under keyboard */
+  @media (max-width: 640px) {
+    textarea:focus, input:focus {
+      font-size: 16px; /* Prevents iOS zoom */
+      position: relative;
+      z-index: 2;
+    }
+
+    .checklist-input:focus {
+      font-size: 16px;
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  /* Better scroll handling for modals */
+  .modal-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -378,4 +401,40 @@
 
 .dark .neo-glow {
   box-shadow: 0 0 15px 2px rgba(42, 157, 143, 0.15);
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .modal-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    flex-shrink: 0;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    flex-shrink: 0;
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+  }
 }
