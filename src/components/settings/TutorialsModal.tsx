@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   GraduationCap, 
@@ -57,6 +56,7 @@ const TutorialsModal: React.FC = () => {
       time: "5 min read",
       difficulty: "Beginner",
       isNew: true,
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/getting-started/account-setup"
     },
     {
@@ -64,7 +64,7 @@ const TutorialsModal: React.FC = () => {
       description: "Step-by-step guide to recording transactions",
       time: "3 min read",
       difficulty: "Beginner",
-      author: "FinanceFootprint Team",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/getting-started/first-transaction"
     },
     {
@@ -72,7 +72,7 @@ const TutorialsModal: React.FC = () => {
       description: "Overview of all the main features and screens",
       time: "7 min read",
       difficulty: "Beginner",
-      author: "FinanceFootprint Team",
+      author: "FinanceFootprint_Sarang",
       rating: 4.8,
       url: "https://docs.financefootprint.com/getting-started/dashboard-overview"
     },
@@ -81,7 +81,7 @@ const TutorialsModal: React.FC = () => {
       description: "How to define and track your financial objectives",
       time: "6 min read",
       difficulty: "Beginner",
-      author: "FinanceFootprint Team",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/getting-started/financial-goals"
     },
     {
@@ -90,7 +90,7 @@ const TutorialsModal: React.FC = () => {
       time: "4 min read",
       difficulty: "Beginner",
       isNew: true,
-      author: "FinanceFootprint Team",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/getting-started/security"
     }
   ];
@@ -102,7 +102,7 @@ const TutorialsModal: React.FC = () => {
       time: "4 min read",
       difficulty: "Intermediate",
       category: "Organization",
-      author: "CategoryMaster",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/advanced/custom-categories"
     },
     {
@@ -112,7 +112,7 @@ const TutorialsModal: React.FC = () => {
       difficulty: "Intermediate",
       category: "Analytics",
       isFeatured: true,
-      author: "DataGuru",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/advanced/spending-analysis"
     },
     {
@@ -121,7 +121,7 @@ const TutorialsModal: React.FC = () => {
       time: "8 min read",
       difficulty: "Advanced",
       category: "Planning",
-      author: "GoalAchiever",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/advanced/budgeting-goals"
     },
     {
@@ -130,7 +130,7 @@ const TutorialsModal: React.FC = () => {
       time: "5 min read",
       difficulty: "Intermediate",
       category: "Automation",
-      author: "EfficiencyPro",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/advanced/recurring-transactions"
     },
     {
@@ -139,7 +139,7 @@ const TutorialsModal: React.FC = () => {
       time: "10 min read",
       difficulty: "Advanced",
       category: "Taxes",
-      author: "TaxExpert",
+      author: "FinanceFootprint_Sarang",
       isFeatured: true,
       url: "https://docs.financefootprint.com/advanced/tax-planning"
     },
@@ -149,7 +149,7 @@ const TutorialsModal: React.FC = () => {
       time: "7 min read",
       difficulty: "Advanced",
       category: "Reports",
-      author: "ReportMaster",
+      author: "FinanceFootprint_Sarang",
       url: "https://docs.financefootprint.com/advanced/financial-reports"
     }
   ];
@@ -218,49 +218,49 @@ const TutorialsModal: React.FC = () => {
       type: "Excel Spreadsheet",
       size: "189 KB",
       description: "Detailed expense tracking with categorization and analysis",
-      url: "https://financefootprint.com/downloads/expense-tracker.xlsx"
+      url: "https://drive.google.com/file/d/1eK3HmWRFPEcL9yoSwBsXuU0ixKPiSNdV/view?usp=sharing"
     },
     {
       title: "Savings Goal Calculator",
       type: "Excel Spreadsheet",
       size: "156 KB",
       description: "Plan and track your progress towards savings goals",
-      url: "https://financefootprint.com/downloads/savings-calculator.xlsx"
+      url: "https://drive.google.com/file/d/1YrNvXjK5x8JV4zVKmhRzRu3Kd7H2qp-t/view?usp=sharing"
     },
     {
       title: "Investment Portfolio Tracker",
       type: "Excel Spreadsheet",
       size: "210 KB",
       description: "Monitor your investments and analyze performance",
-      url: "https://financefootprint.com/downloads/investment-tracker.xlsx"
+      url: "https://drive.google.com/file/d/1q9b3M4G8oXyKZ2tNhJzLzpW6v9eFwcXp/view?usp=sharing"
     },
     {
       title: "Debt Reduction Planner",
       type: "Excel Spreadsheet",
       size: "178 KB",
       description: "Strategies and calculations to eliminate debt faster",
-      url: "https://financefootprint.com/downloads/debt-reduction-planner.xlsx"
+      url: "https://drive.google.com/file/d/1pZLH8nCvQgHx6WXRj45dKfYz_X_JrWTR/view?usp=sharing"
     },
     {
       title: "Financial Goal Setting Worksheet",
       type: "PDF",
       size: "125 KB",
       description: "Worksheet to help define clear and achievable financial goals",
-      url: "https://financefootprint.com/downloads/financial-goals-worksheet.pdf"
+      url: "https://drive.google.com/file/d/1m3X2-QjgK-e5rzD8tLvFDaUJ8cXpLY2g/view?usp=sharing"
     },
     {
       title: "Emergency Fund Calculator",
       type: "Excel Spreadsheet",
       size: "145 KB",
       description: "Calculate how much you need in your emergency fund",
-      url: "https://financefootprint.com/downloads/emergency-fund-calculator.xlsx"
+      url: "https://drive.google.com/file/d/1kLNfGxY7vQhZ8JzV7qeJxH3D9N4Ew_m3/view?usp=sharing"
     },
     {
       title: "Tax Deduction Checklist",
       type: "PDF",
       size: "135 KB",
       description: "Comprehensive list of potential tax deductions",
-      url: "https://financefootprint.com/downloads/tax-deduction-checklist.pdf"
+      url: "https://drive.google.com/file/d/1j2W8X3qLuFYHmRt7dCz6yrpZ-F2jxC7Q/view?usp=sharing"
     }
   ];
 
@@ -319,7 +319,6 @@ const TutorialsModal: React.FC = () => {
             </button>
           </div>
           
-          {/* Search and Filter Bar */}
           <div className="flex flex-col sm:flex-row gap-2 items-center">
             <div className="relative w-full">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -537,6 +536,7 @@ const TutorialsModal: React.FC = () => {
                 key={index}
                 className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
                 style={{ animationDelay: `${index * 50}ms` }}
+                onClick={() => window.open(resource.url, "_blank")}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <FileText size={18} className="text-primary shrink-0" />
@@ -550,7 +550,8 @@ const TutorialsModal: React.FC = () => {
                   </div>
                   <a 
                     href={resource.url} 
-                    download 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-primary hover:underline flex items-center"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -571,10 +572,15 @@ const TutorialsModal: React.FC = () => {
               Download our complete resource pack containing all templates, worksheets, and calculators in one convenient file.
             </p>
             <div className="flex justify-end">
-              <button className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded hover:bg-primary/90 transition-colors flex items-center">
+              <a 
+                href="https://drive.google.com/file/d/1g7H3qpKZj5tR9F2kLmX8uY6pQ2wR4Jvf/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded hover:bg-primary/90 transition-colors flex items-center"
+              >
                 <Download size={12} className="mr-1" />
                 Download Complete Pack (850 KB)
-              </button>
+              </a>
             </div>
           </div>
         </section>

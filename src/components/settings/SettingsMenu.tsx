@@ -105,16 +105,18 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setActiveModal }) => {
           <ChevronRight size={18} className="text-muted-foreground" />
         </button>
         
-        <button
-          onClick={() => setActiveModal("forum")}
+        <a
+          href="https://www.reddit.com/r/financeFootprint/s/znrvd33MHS"
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
         >
           <div className="flex items-center space-x-3">
             <Users className="text-muted-foreground" size={18} />
             <span className="text-foreground text-sm sm:text-base">Community Forum</span>
           </div>
-          <ChevronRight size={18} className="text-muted-foreground" />
-        </button>
+          <ExternalLink size={16} className="text-muted-foreground" />
+        </a>
         
         <button
           onClick={() => setActiveModal("tutorials")}

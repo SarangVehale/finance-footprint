@@ -49,18 +49,21 @@ const HelpSupportModal: React.FC = () => {
       <section className="space-y-4">
         <h3 className="text-base sm:text-lg font-medium text-foreground">Additional Resources</h3>
         <div className="space-y-3">
-          <button
-            onClick={() => window.location.href = "#/settings?modal=forum"}
-            className="w-full flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          <a
+            href="https://www.reddit.com/r/financeFootprint/s/znrvd33MHS"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-3 p-3 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           >
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Users size={20} className="text-primary" />
             </div>
             <div className="text-left">
-              <h4 className="font-medium text-foreground">Community Forum</h4>
-              <p className="text-sm text-muted-foreground">Join our supportive community</p>
+              <h4 className="font-medium text-foreground">Reddit Community</h4>
+              <p className="text-sm text-muted-foreground">Join our Reddit community</p>
             </div>
-          </button>
+            <ExternalLink size={14} className="ml-auto text-muted-foreground" />
+          </a>
 
           <button
             onClick={() => window.location.href = "#/settings?modal=tutorials"}
