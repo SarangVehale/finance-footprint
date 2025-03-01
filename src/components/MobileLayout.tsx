@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Home, PieChart, Clock, Settings, FileText } from "lucide-react";
 
 interface MobileLayoutProps {
@@ -32,6 +32,7 @@ interface NavLinkProps {
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ to, icon, label }) => {
+  const location = useLocation();
   const isActive = location.pathname === to;
 
   return (
