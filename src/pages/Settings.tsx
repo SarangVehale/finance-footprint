@@ -312,7 +312,7 @@ const Settings = () => {
                         <Plus size={18} />
                       </button>
                     </div>
-                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                    <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-2">
                       {categories.map((category, index) => (
                         <div
                           key={category}
@@ -483,6 +483,83 @@ const Settings = () => {
                                 <span>{discussion.replies} replies</span>
                                 <span>{discussion.time}</span>
                               </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    
+                    {/* New forum features */}
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Featured Discussions</h3>
+                      <div className="space-y-3">
+                        <div className="p-4 border border-primary/20 rounded-lg bg-primary/5">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-primary">Monthly Budget Challenge</h4>
+                            <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">Featured</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">Join our monthly challenge to reduce spending and increase savings!</p>
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-primary font-medium">42 participants</span>
+                            </div>
+                            <span className="text-muted-foreground">Ends in 12 days</span>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Community Resources</h3>
+                      <div className="grid gap-3 grid-cols-2">
+                        {[
+                          { title: "Templates", description: "Budget spreadsheets & planners", count: 18 },
+                          { title: "Calculators", description: "Financial planning tools", count: 12 },
+                          { title: "Guides", description: "Step-by-step tutorials", count: 24 },
+                          { title: "Scripts", description: "Automation helpers", count: 8 }
+                        ].map((resource, index) => (
+                          <div 
+                            key={index}
+                            className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100 + 600}ms` }}
+                          >
+                            <h4 className="font-medium text-sm">{resource.title}</h4>
+                            <p className="text-xs text-muted-foreground mb-1">{resource.description}</p>
+                            <span className="text-xs text-primary">{resource.count} resources</span>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    
+                    <section className="space-y-4">
+                      <h3 className="text-base sm:text-lg font-medium">Community Events</h3>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            title: "Financial Freedom Workshop",
+                            date: "June 15, 2024",
+                            time: "7:00 PM EST",
+                            type: "Online"
+                          },
+                          {
+                            title: "Ask Me Anything: Investment Tips",
+                            date: "June 22, 2024",
+                            time: "6:30 PM EST",
+                            type: "Online"
+                          }
+                        ].map((event, index) => (
+                          <div 
+                            key={index} 
+                            className="p-3 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
+                            style={{ animationDelay: `${index * 100 + 700}ms` }}
+                          >
+                            <h4 className="font-medium mb-1">{event.title}</h4>
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="space-y-1">
+                                <p className="text-muted-foreground">{event.date}</p>
+                                <p className="text-muted-foreground">{event.time}</p>
+                              </div>
+                              <span className="px-2 py-1 bg-primary/10 text-primary rounded-full">{event.type}</span>
                             </div>
                           </div>
                         ))}
