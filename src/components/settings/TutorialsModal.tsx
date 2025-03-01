@@ -1,269 +1,38 @@
+
 import React, { useState } from "react";
 import { 
   GraduationCap, 
-  Play, 
   BookOpen, 
-  Book, 
-  FileText,
   Video,
   Download,
-  ExternalLink,
+  Check,
+  Search,
+  Filter,
+  Book,
   PieChart,
   DollarSign,
   TrendingUp,
-  Star,
-  Clock,
-  Tag,
-  Calendar,
-  Search,
-  Filter,
-  Check,
   Bookmark
 } from "lucide-react";
 
-interface Tutorial {
-  title: string;
-  description: string;
-  time: string;
-  difficulty: string;
-  category?: string;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  author?: string;
-  rating?: number;
-  url?: string;
-}
+// Import components
+import TutorialCard from "./tutorials/TutorialCard";
+import VideoCard from "./tutorials/VideoCard";
+import ResourceCard from "./tutorials/ResourceCard";
 
-interface VideoTutorial {
-  title: string;
-  description: string;
-  time: string;
-  thumbnail?: string;
-  views?: number;
-  difficulty?: string;
-  url?: string;
-}
+// Import data from config files
+import { 
+  gettingStarted, 
+  advancedTutorials, 
+  videoTutorials, 
+  downloadableResources 
+} from "../../config/tutorials";
 
 const TutorialsModal: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"guides" | "videos" | "resources">("guides");
   const [searchQuery, setSearchQuery] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   
-  const gettingStarted: Tutorial[] = [
-    {
-      title: "Setting Up Your Account",
-      description: "Learn how to create and configure your account",
-      time: "5 min read",
-      difficulty: "Beginner",
-      isNew: true,
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/getting-started/account-setup"
-    },
-    {
-      title: "Adding Your First Transaction",
-      description: "Step-by-step guide to recording transactions",
-      time: "3 min read",
-      difficulty: "Beginner",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/getting-started/first-transaction"
-    },
-    {
-      title: "Understanding the Dashboard",
-      description: "Overview of all the main features and screens",
-      time: "7 min read",
-      difficulty: "Beginner",
-      author: "FinanceFootprint_Sarang",
-      rating: 4.8,
-      url: "https://docs.financefootprint.com/getting-started/dashboard-overview"
-    },
-    {
-      title: "Setting Your Financial Goals",
-      description: "How to define and track your financial objectives",
-      time: "6 min read",
-      difficulty: "Beginner",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/getting-started/financial-goals"
-    },
-    {
-      title: "Managing Account Security",
-      description: "Best practices for securing your financial data",
-      time: "4 min read",
-      difficulty: "Beginner",
-      isNew: true,
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/getting-started/security"
-    }
-  ];
-
-  const advancedTutorials: Tutorial[] = [
-    {
-      title: "Creating Custom Categories",
-      description: "Organize your finances with personalized categories",
-      time: "4 min read",
-      difficulty: "Intermediate",
-      category: "Organization",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/advanced/custom-categories"
-    },
-    {
-      title: "Analyzing Your Spending Patterns",
-      description: "Get insights into your financial habits using analytics",
-      time: "6 min read",
-      difficulty: "Intermediate",
-      category: "Analytics",
-      isFeatured: true,
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/advanced/spending-analysis"
-    },
-    {
-      title: "Setting Budgets and Goals",
-      description: "Learn how to plan and track your financial goals",
-      time: "8 min read",
-      difficulty: "Advanced",
-      category: "Planning",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/advanced/budgeting-goals"
-    },
-    {
-      title: "Automating Regular Transactions",
-      description: "Set up recurring transactions to save time",
-      time: "5 min read",
-      difficulty: "Intermediate",
-      category: "Automation",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/advanced/recurring-transactions"
-    },
-    {
-      title: "Tax Planning with Finance Footprint",
-      description: "Prepare for tax season by categorizing and reporting",
-      time: "10 min read",
-      difficulty: "Advanced",
-      category: "Taxes",
-      author: "FinanceFootprint_Sarang",
-      isFeatured: true,
-      url: "https://docs.financefootprint.com/advanced/tax-planning"
-    },
-    {
-      title: "Creating Financial Reports",
-      description: "Generate comprehensive reports for better insights",
-      time: "7 min read",
-      difficulty: "Advanced",
-      category: "Reports",
-      author: "FinanceFootprint_Sarang",
-      url: "https://docs.financefootprint.com/advanced/financial-reports"
-    }
-  ];
-
-  const videoTutorials: VideoTutorial[] = [
-    {
-      title: "Complete App Walkthrough",
-      description: "Full overview of all app features and functionality",
-      time: "15 min video",
-      views: 2453,
-      difficulty: "All Levels",
-      url: "https://www.youtube.com/watch?v=finance-footprint-walkthrough"
-    },
-    {
-      title: "Creating Reports and Exports",
-      description: "How to generate and share financial reports",
-      time: "8 min video",
-      views: 1245,
-      difficulty: "Intermediate",
-      url: "https://www.youtube.com/watch?v=finance-footprint-reports"
-    },
-    {
-      title: "Mobile Tips and Tricks",
-      description: "Get the most out of the mobile experience",
-      time: "6 min video",
-      views: 983,
-      difficulty: "Beginner",
-      url: "https://www.youtube.com/watch?v=finance-footprint-mobile"
-    },
-    {
-      title: "Advanced Budget Analysis",
-      description: "Deep dive into analyzing your spending patterns",
-      time: "12 min video",
-      views: 1562,
-      difficulty: "Advanced",
-      url: "https://www.youtube.com/watch?v=finance-footprint-budget-analysis"
-    },
-    {
-      title: "Data Visualization Techniques",
-      description: "Making the most of charts and visual data",
-      time: "10 min video",
-      views: 1105,
-      difficulty: "Intermediate",
-      url: "https://www.youtube.com/watch?v=finance-footprint-data-viz"
-    },
-    {
-      title: "Importing Financial Data",
-      description: "How to import data from other apps or bank statements",
-      time: "7 min video",
-      views: 1783,
-      difficulty: "Intermediate",
-      url: "https://www.youtube.com/watch?v=finance-footprint-importing"
-    }
-  ];
-
-  const downloadableResources = [
-    {
-      title: "Monthly Budget Template",
-      type: "Excel Spreadsheet",
-      size: "245 KB",
-      description: "Comprehensive monthly budget planner with automated calculations",
-      url: "https://financefootprint.com/downloads/monthly-budget-template.xlsx"
-    },
-    {
-      title: "Expense Tracker",
-      type: "Excel Spreadsheet",
-      size: "189 KB",
-      description: "Detailed expense tracking with categorization and analysis",
-      url: "https://drive.google.com/file/d/1eK3HmWRFPEcL9yoSwBsXuU0ixKPiSNdV/view?usp=sharing"
-    },
-    {
-      title: "Savings Goal Calculator",
-      type: "Excel Spreadsheet",
-      size: "156 KB",
-      description: "Plan and track your progress towards savings goals",
-      url: "https://drive.google.com/file/d/1YrNvXjK5x8JV4zVKmhRzRu3Kd7H2qp-t/view?usp=sharing"
-    },
-    {
-      title: "Investment Portfolio Tracker",
-      type: "Excel Spreadsheet",
-      size: "210 KB",
-      description: "Monitor your investments and analyze performance",
-      url: "https://drive.google.com/file/d/1q9b3M4G8oXyKZ2tNhJzLzpW6v9eFwcXp/view?usp=sharing"
-    },
-    {
-      title: "Debt Reduction Planner",
-      type: "Excel Spreadsheet",
-      size: "178 KB",
-      description: "Strategies and calculations to eliminate debt faster",
-      url: "https://drive.google.com/file/d/1pZLH8nCvQgHx6WXRj45dKfYz_X_JrWTR/view?usp=sharing"
-    },
-    {
-      title: "Financial Goal Setting Worksheet",
-      type: "PDF",
-      size: "125 KB",
-      description: "Worksheet to help define clear and achievable financial goals",
-      url: "https://drive.google.com/file/d/1m3X2-QjgK-e5rzD8tLvFDaUJ8cXpLY2g/view?usp=sharing"
-    },
-    {
-      title: "Emergency Fund Calculator",
-      type: "Excel Spreadsheet",
-      size: "145 KB",
-      description: "Calculate how much you need in your emergency fund",
-      url: "https://drive.google.com/file/d/1kLNfGxY7vQhZ8JzV7qeJxH3D9N4Ew_m3/view?usp=sharing"
-    },
-    {
-      title: "Tax Deduction Checklist",
-      type: "PDF",
-      size: "135 KB",
-      description: "Comprehensive list of potential tax deductions",
-      url: "https://drive.google.com/file/d/1j2W8X3qLuFYHmRt7dCz6yrpZ-F2jxC7Q/view?usp=sharing"
-    }
-  ];
-
   const filteredTutorials = [...gettingStarted, ...advancedTutorials].filter(tutorial => {
     const matchesSearch = tutorial.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         tutorial.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -358,43 +127,13 @@ const TutorialsModal: React.FC = () => {
               {filteredTutorials
                 .filter(tutorial => gettingStarted.some(starter => starter.title === tutorial.title))
                 .map((tutorial, index) => (
-                <div 
-                  key={index}
-                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                  onClick={() => tutorial.url && window.open(tutorial.url, "_blank")}
-                >
-                  <div className="flex justify-between mb-1">
-                    <h4 className="font-medium">{tutorial.title}</h4>
-                    {tutorial.isNew && (
-                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">New</span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">{tutorial.description}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 text-xs">
-                      <span className="px-2 py-1 bg-primary/10 text-primary rounded-full">{tutorial.difficulty}</span>
-                      <span className="text-muted-foreground flex items-center">
-                        <Clock size={12} className="mr-1" />
-                        {tutorial.time}
-                      </span>
-                    </div>
-                    {tutorial.author && (
-                      <span className="text-xs text-muted-foreground">By {tutorial.author}</span>
-                    )}
-                  </div>
-                  {tutorial.rating && (
-                    <div className="flex items-center mt-2 text-xs text-amber-500">
-                      <Star size={12} className="fill-current" />
-                      <Star size={12} className="fill-current" />
-                      <Star size={12} className="fill-current" />
-                      <Star size={12} className="fill-current" />
-                      <Star size={12} className="fill-current opacity-50" />
-                      <span className="ml-1 text-muted-foreground">{tutorial.rating}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  <TutorialCard 
+                    key={index} 
+                    tutorial={tutorial} 
+                    delayIndex={index} 
+                    isGettingStarted={true}
+                  />
+                ))}
             </div>
           </section>
           
@@ -407,43 +146,12 @@ const TutorialsModal: React.FC = () => {
               {filteredTutorials
                 .filter(tutorial => advancedTutorials.some(advanced => advanced.title === tutorial.title))
                 .map((tutorial, index) => (
-                <div 
-                  key={index}
-                  className={`p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in ${
-                    tutorial.isFeatured ? "border-primary/30 bg-primary/5" : "border-border"
-                  }`}
-                  style={{ animationDelay: `${index * 100 + 300}ms` }}
-                  onClick={() => tutorial.url && window.open(tutorial.url, "_blank")}
-                >
-                  <div className="flex justify-between mb-1">
-                    <h4 className="font-medium">{tutorial.title}</h4>
-                    {tutorial.isFeatured && (
-                      <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded-full">Featured</span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">{tutorial.description}</p>
-                  <div className="flex items-center flex-wrap gap-2 text-xs mb-2">
-                    <span className="px-2 py-1 bg-primary/10 text-primary rounded-full">{tutorial.difficulty}</span>
-                    {tutorial.category && (
-                      <span className="px-2 py-1 bg-accent text-muted-foreground rounded-full flex items-center">
-                        <Tag size={10} className="mr-1" />
-                        {tutorial.category}
-                      </span>
-                    )}
-                    <span className="text-muted-foreground flex items-center">
-                      <Clock size={12} className="mr-1" />
-                      {tutorial.time}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">By {tutorial.author}</span>
-                    <button className="text-primary hover:underline flex items-center">
-                      Read Guide
-                      <ExternalLink size={10} className="ml-1" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  <TutorialCard 
+                    key={index} 
+                    tutorial={tutorial} 
+                    delayIndex={index}
+                  />
+                ))}
             </div>
           </section>
           
@@ -492,33 +200,7 @@ const TutorialsModal: React.FC = () => {
           </div>
           <div className="space-y-3 custom-scrollbar">
             {filteredVideos.map((video, index) => (
-              <div 
-                key={index}
-                className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in flex items-center space-x-3"
-                style={{ animationDelay: `${index * 100 + 600}ms` }}
-                onClick={() => video.url && window.open(video.url, "_blank")}
-              >
-                <div className="w-12 h-12 flex-shrink-0 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                  <Play size={20} />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium mb-1">{video.title}</h4>
-                  <p className="text-sm text-muted-foreground mb-1">{video.description}</p>
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-muted-foreground">{video.time}</span>
-                      {video.difficulty && (
-                        <span className="px-1.5 py-0.5 bg-primary/10 text-primary rounded-full text-[10px]">
-                          {video.difficulty}
-                        </span>
-                      )}
-                    </div>
-                    {video.views && (
-                      <span className="text-muted-foreground">{video.views.toLocaleString()} views</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <VideoCard key={index} video={video} index={index} />
             ))}
           </div>
         </section>
@@ -532,34 +214,7 @@ const TutorialsModal: React.FC = () => {
           </div>
           <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 custom-scrollbar">
             {downloadableResources.map((resource, index) => (
-              <div 
-                key={index}
-                className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => window.open(resource.url, "_blank")}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText size={18} className="text-primary shrink-0" />
-                  <h4 className="font-medium">{resource.title}</h4>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3">{resource.description}</p>
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">{resource.type}</span>
-                    <span className="text-muted-foreground">{resource.size}</span>
-                  </div>
-                  <a 
-                    href={resource.url} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline flex items-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Download size={12} className="mr-1" />
-                    Download
-                  </a>
-                </div>
-              </div>
+              <ResourceCard key={index} resource={resource} index={index} />
             ))}
           </div>
           
