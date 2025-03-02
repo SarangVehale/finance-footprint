@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { X, FileText, CheckSquare, Plus, ArrowLeft } from 'lucide-react';
 
@@ -41,7 +40,25 @@ const NoteModal = ({
 }: NoteModalProps) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const checklistContainerRef = useRef<HTMLDivElement>(null);
+  const modalContentRef = useRef<HTMLDivElement>(null);
   const isMobile = window.innerWidth < 640;
+
+  useEffect(() => {
+    // Handle click outside of modal content to close it
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (modalContentRef.current && 
+          !modalContentRef.current.contains(event.target as Node) && 
+          show) {
+        onClose();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleOutsideClick);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [show, onClose]);
 
   useEffect(() => {
     if (show) {
@@ -95,7 +112,7 @@ const NoteModal = ({
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
       <div 
-        ref={modalRef}
+        ref={modalContentRef}
         className="bg-card w-full h-[calc(100%-env(safe-area-inset-top))] sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col pt-safe-top pb-safe-bottom"
       >
         <div className="flex justify-between items-center p-4 border-b border-border">

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import AppearanceModal from "./AppearanceModal";
 import CategoriesModal from "./CategoriesModal";
@@ -47,6 +47,23 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   setCategories
 }) => {
   if (!activeModal) return null;
+  
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  
+  // Handle click outside of modal content to close it
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (modalContentRef.current && !modalContentRef.current.contains(event.target as Node)) {
+        setActiveModal(null);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleOutsideClick);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [setActiveModal]);
   
   const getModalTitle = () => {
     switch (activeModal) {
@@ -96,7 +113,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-      <div className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
+      <div ref={modalContentRef} className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
         <div className="flex justify-between items-center p-3 sm:p-4 border-b border-border">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">
             {getModalTitle()}
