@@ -24,6 +24,9 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 164 75% 42%;
     --radius: 1rem;
+    --scrollbar-track: rgba(196, 200, 207, 0.1);
+    --scrollbar-thumb: rgba(155, 135, 245, 0.4);
+    --scrollbar-thumb-hover: rgba(155, 135, 245, 0.6);
   }
 
   .dark {
@@ -46,6 +49,9 @@
     --border: 222 33% 25%;
     --input: 222 33% 25%;
     --ring: 164 75% 42%;
+    --scrollbar-track: rgba(26, 31, 44, 0.1);
+    --scrollbar-thumb: rgba(155, 135, 245, 0.5);
+    --scrollbar-thumb-hover: rgba(155, 135, 245, 0.8);
   }
 }
 

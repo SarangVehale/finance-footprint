@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { Plus, FileText } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
@@ -10,6 +9,7 @@ import NoteModal from "@/components/notes/NoteModal";
 
 const Notes = () => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const notesContainerRef = useRef<HTMLDivElement>(null);
   const [notes, setNotes] = React.useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showNewNote, setShowNewNote] = React.useState(false);
@@ -21,11 +21,25 @@ const Notes = () => {
   });
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isViewingNote, setIsViewingNote] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   useEffect(() => {
     const loadedNotes = storageService.getNotes();
     setNotes(loadedNotes);
   }, []);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (notesContainerRef.current) {
+        const hasVerticalOverflow = notesContainerRef.current.scrollHeight > notesContainerRef.current.clientHeight;
+        setHasOverflow(hasVerticalOverflow);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [notes, searchTerm, filteredNotes]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,7 +62,6 @@ const Notes = () => {
     };
   }, [showNewNote, isViewingNote, newNote]);
 
-  // Auto-save effect - saves note after brief pause in typing or changes
   useEffect(() => {
     if (!showNewNote && !isViewingNote) return;
     
@@ -66,7 +79,6 @@ const Notes = () => {
   }, [newNote, showNewNote, isViewingNote]);
 
   const handleAddNote = (autoSave = false) => {
-    // Don't save empty notes
     if (!newNote.title && !newNote.content && newNote.checklist.length === 0) {
       if (!autoSave) setShowNewNote(false);
       return;
@@ -74,7 +86,7 @@ const Notes = () => {
 
     const note: Note = {
       id: crypto.randomUUID(),
-      title: newNote.title || "Untitled", // Prevent empty titles
+      title: newNote.title || "Untitled",
       content: noteType === "text" ? newNote.content : "",
       checklist: noteType === "checklist" ? newNote.checklist : [],
       createdAt: new Date().toISOString(),
@@ -87,7 +99,6 @@ const Notes = () => {
     storageService.saveNote(note);
     setNotes([...notes, note]);
     
-    // Only reset and close if not an auto-save
     if (!autoSave) {
       setNewNote({ title: "", content: "", checklist: [] });
       setShowNewNote(false);
@@ -138,12 +149,11 @@ const Notes = () => {
       }, 0);
     }
   };
-  
+
   const handleViewNote = (note: Note) => {
     setSelectedNote(note);
     setIsViewingNote(true);
     
-    // Set the appropriate note type and content
     if (note.type === "checklist") {
       setNoteType("checklist");
       setNewNote({
@@ -166,7 +176,7 @@ const Notes = () => {
     
     const updatedNote: Note = {
       ...selectedNote,
-      title: newNote.title || "Untitled", // Prevent empty titles
+      title: newNote.title || "Untitled",
       content: noteType === "text" ? newNote.content : "",
       checklist: noteType === "checklist" ? newNote.checklist : [],
       updatedAt: new Date().toISOString(),
@@ -176,7 +186,6 @@ const Notes = () => {
     storageService.updateNote(updatedNote);
     setNotes(notes.map(n => n.id === updatedNote.id ? updatedNote : n));
     
-    // Only reset and close if not an auto-save
     if (!autoSave) {
       setSelectedNote(null);
       setIsViewingNote(false);
@@ -192,40 +201,53 @@ const Notes = () => {
     )
   );
 
+  const getScrollbarClass = () => {
+    const baseClass = "notes-scrollbar";
+    if (hasOverflow) {
+      return `${baseClass} has-overflow`;
+    }
+    return baseClass;
+  };
+
   return (
     <MobileLayout>
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top">
-        <SearchBar value={searchTerm} onChange={setSearchTerm} />
+      <div 
+        className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top overflow-hidden"
+        ref={notesContainerRef}
+      >
+        <div className={getScrollbarClass()}>
+          <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-          {filteredNotes.map((note) => (
-            <div key={note.id} onClick={() => handleViewNote(note)}>
-              <NoteCard
-                note={note}
-                onDelete={(e) => handleDeleteNote(note.id, e)}
-                onToggleCheckItem={handleToggleCheckItem}
-              />
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+            {filteredNotes.map((note) => (
+              <div key={note.id} onClick={() => handleViewNote(note)}>
+                <NoteCard
+                  note={note}
+                  onDelete={(e) => handleDeleteNote(note.id, e)}
+                  onToggleCheckItem={handleToggleCheckItem}
+                />
+              </div>
+            ))}
+          </div>
+
+          {filteredNotes.length === 0 && !searchTerm && (
+            <div className="flex flex-col items-center justify-center pt-10 pb-16 text-center">
+              <div className="bg-accent/50 p-6 rounded-2xl mb-4">
+                <FileText className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">No notes yet</h3>
+              <p className="text-muted-foreground text-sm max-w-xs">
+                Create your first note by clicking the + button below
+              </p>
             </div>
-          ))}
+          )}
+
+          {filteredNotes.length === 0 && searchTerm && (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground">No notes found</p>
+            </div>
+          )}
         </div>
-
-        {filteredNotes.length === 0 && !searchTerm && (
-          <div className="flex flex-col items-center justify-center pt-10 pb-16 text-center">
-            <div className="bg-accent/50 p-6 rounded-2xl mb-4">
-              <FileText className="w-12 h-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">No notes yet</h3>
-            <p className="text-muted-foreground text-sm max-w-xs">
-              Create your first note by clicking the + button below
-            </p>
-          </div>
-        )}
-
-        {filteredNotes.length === 0 && searchTerm && (
-          <div className="text-center py-10">
-            <p className="text-muted-foreground">No notes found</p>
-          </div>
-        )}
 
         <button
           onClick={() => {
@@ -239,7 +261,6 @@ const Notes = () => {
           <Plus size={24} />
         </button>
 
-        {/* New Note Modal */}
         <NoteModal
           show={showNewNote}
           onClose={() => {
@@ -273,7 +294,6 @@ const Notes = () => {
           modalRef={modalRef}
         />
 
-        {/* View/Edit Note Modal */}
         <NoteModal
           show={isViewingNote}
           onClose={() => {
