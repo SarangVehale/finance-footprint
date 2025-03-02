@@ -23,6 +23,14 @@ const Notes = () => {
   const [isViewingNote, setIsViewingNote] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
 
+  const filteredNotes = notes.filter(note =>
+    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.checklist?.some(item => 
+      item.text.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   useEffect(() => {
     const loadedNotes = storageService.getNotes();
     setNotes(loadedNotes);
@@ -192,14 +200,6 @@ const Notes = () => {
       setNewNote({ title: "", content: "", checklist: [] });
     }
   };
-
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.checklist?.some(item => 
-      item.text.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
 
   const getScrollbarClass = () => {
     const baseClass = "notes-scrollbar";
