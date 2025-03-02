@@ -13,6 +13,8 @@ import Notes from "./pages/Notes";
 import NotFound from "./pages/NotFound";
 import Loading from "./pages/Loading";
 import Welcome from "./pages/Welcome";
+import TutorialPage from "./pages/Tutorials";
+import VideoTutorialPage from "./pages/VideoTutorial";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -54,6 +56,8 @@ const App = () => {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/notes" element={<Notes />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/tutorial/:id" element={<TutorialPage />} />
+              <Route path="/video/:id" element={<VideoTutorialPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

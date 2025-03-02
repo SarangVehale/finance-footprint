@@ -9,6 +9,7 @@ import { VideoTutorial } from '../../types/tutorial';
  */
 export const videoTutorials: VideoTutorial[] = [
   {
+    id: "app-walkthrough",
     title: "Complete App Walkthrough",
     description: "Full overview of all app features and functionality",
     time: "15 min video",
@@ -17,6 +18,7 @@ export const videoTutorials: VideoTutorial[] = [
     url: "https://www.youtube.com/watch?v=finance-footprint-walkthrough"
   },
   {
+    id: "reports-exports",
     title: "Creating Reports and Exports",
     description: "How to generate and share financial reports",
     time: "8 min video",
@@ -25,6 +27,7 @@ export const videoTutorials: VideoTutorial[] = [
     url: "https://www.youtube.com/watch?v=finance-footprint-reports"
   },
   {
+    id: "mobile-tips",
     title: "Mobile Tips and Tricks",
     description: "Get the most out of the mobile experience",
     time: "6 min video",
@@ -33,6 +36,7 @@ export const videoTutorials: VideoTutorial[] = [
     url: "https://www.youtube.com/watch?v=finance-footprint-mobile"
   },
   {
+    id: "budget-analysis",
     title: "Advanced Budget Analysis",
     description: "Deep dive into analyzing your spending patterns",
     time: "12 min video",
@@ -41,6 +45,7 @@ export const videoTutorials: VideoTutorial[] = [
     url: "https://www.youtube.com/watch?v=finance-footprint-budget-analysis"
   },
   {
+    id: "data-viz",
     title: "Data Visualization Techniques",
     description: "Making the most of charts and visual data",
     time: "10 min video",
@@ -49,6 +54,7 @@ export const videoTutorials: VideoTutorial[] = [
     url: "https://www.youtube.com/watch?v=finance-footprint-data-viz"
   },
   {
+    id: "importing-data",
     title: "Importing Financial Data",
     description: "How to import data from other apps or bank statements",
     time: "7 min video",

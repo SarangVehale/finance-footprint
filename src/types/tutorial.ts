@@ -4,6 +4,7 @@
  */
 
 export interface Tutorial {
+  id: string;
   title: string;
   description: string;
   time: string;
@@ -17,6 +18,7 @@ export interface Tutorial {
 }
 
 export interface VideoTutorial {
+  id: string;
   title: string;
   description: string;
   time: string;

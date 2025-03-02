@@ -2,6 +2,7 @@
 import React from "react";
 import { Clock, Star, Tag } from "lucide-react";
 import { Tutorial } from "../../../types/tutorial";
+import { useNavigate } from "react-router-dom";
 
 interface TutorialCardProps {
   tutorial: Tutorial;
@@ -14,13 +15,23 @@ const TutorialCard: React.FC<TutorialCardProps> = ({
   delayIndex,
   isGettingStarted = false
 }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (tutorial.id) {
+      navigate(`/tutorial/${tutorial.id}`);
+    } else if (tutorial.url) {
+      window.open(tutorial.url, "_blank");
+    }
+  };
+
   return (
     <div 
       className={`p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in ${
         tutorial.isFeatured ? "border-primary/30 bg-primary/5" : "border-border"
       }`}
       style={{ animationDelay: `${delayIndex * 100 + (isGettingStarted ? 0 : 300)}ms` }}
-      onClick={() => tutorial.url && window.open(tutorial.url, "_blank")}
+      onClick={handleClick}
     >
       <div className="flex justify-between mb-1">
         <h4 className="font-medium">{tutorial.title}</h4>

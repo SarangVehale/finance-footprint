@@ -9,6 +9,7 @@ import { Tutorial } from '../../types/tutorial';
  */
 export const advancedTutorials: Tutorial[] = [
   {
+    id: "custom-categories",
     title: "Creating Custom Categories",
     description: "Organize your finances with personalized categories",
     time: "4 min read",
@@ -18,6 +19,7 @@ export const advancedTutorials: Tutorial[] = [
     url: "https://docs.financefootprint.com/advanced/custom-categories"
   },
   {
+    id: "spending-analysis",
     title: "Analyzing Your Spending Patterns",
     description: "Get insights into your financial habits using analytics",
     time: "6 min read",
@@ -28,6 +30,7 @@ export const advancedTutorials: Tutorial[] = [
     url: "https://docs.financefootprint.com/advanced/spending-analysis"
   },
   {
+    id: "budgeting-goals",
     title: "Setting Budgets and Goals",
     description: "Learn how to plan and track your financial goals",
     time: "8 min read",
@@ -37,6 +40,7 @@ export const advancedTutorials: Tutorial[] = [
     url: "https://docs.financefootprint.com/advanced/budgeting-goals"
   },
   {
+    id: "recurring-transactions",
     title: "Automating Regular Transactions",
     description: "Set up recurring transactions to save time",
     time: "5 min read",
@@ -46,6 +50,7 @@ export const advancedTutorials: Tutorial[] = [
     url: "https://docs.financefootprint.com/advanced/recurring-transactions"
   },
   {
+    id: "tax-planning",
     title: "Tax Planning with Finance Footprint",
     description: "Prepare for tax season by categorizing and reporting",
     time: "10 min read",
@@ -56,6 +61,7 @@ export const advancedTutorials: Tutorial[] = [
     url: "https://docs.financefootprint.com/advanced/tax-planning"
   },
   {
+    id: "financial-reports",
     title: "Creating Financial Reports",
     description: "Generate comprehensive reports for better insights",
     time: "7 min read",

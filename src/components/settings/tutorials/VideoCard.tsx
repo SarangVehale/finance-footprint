@@ -2,6 +2,7 @@
 import React from "react";
 import { Play } from "lucide-react";
 import { VideoTutorial } from "../../../types/tutorial";
+import { useNavigate } from "react-router-dom";
 
 interface VideoCardProps {
   video: VideoTutorial;
@@ -9,11 +10,21 @@ interface VideoCardProps {
 }
 
 const VideoCard: React.FC<VideoCardProps> = ({ video, index }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (video.id) {
+      navigate(`/video/${video.id}`);
+    } else if (video.url) {
+      window.open(video.url, "_blank");
+    }
+  };
+
   return (
     <div 
       className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-all duration-200 cursor-pointer animate-fade-in flex items-center space-x-3"
       style={{ animationDelay: `${index * 100 + 600}ms` }}
-      onClick={() => video.url && window.open(video.url, "_blank")}
+      onClick={handleClick}
     >
       <div className="w-12 h-12 flex-shrink-0 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
         <Play size={20} />

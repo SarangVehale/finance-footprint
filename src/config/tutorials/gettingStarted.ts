@@ -9,6 +9,7 @@ import { Tutorial } from '../../types/tutorial';
  */
 export const gettingStarted: Tutorial[] = [
   {
+    id: "account-setup",
     title: "Setting Up Your Account",
     description: "Learn how to create and configure your account",
     time: "5 min read",
@@ -18,6 +19,7 @@ export const gettingStarted: Tutorial[] = [
     url: "https://docs.financefootprint.com/getting-started/account-setup"
   },
   {
+    id: "first-transaction",
     title: "Adding Your First Transaction",
     description: "Step-by-step guide to recording transactions",
     time: "3 min read",
@@ -26,6 +28,7 @@ export const gettingStarted: Tutorial[] = [
     url: "https://docs.financefootprint.com/getting-started/first-transaction"
   },
   {
+    id: "dashboard-overview",
     title: "Understanding the Dashboard",
     description: "Overview of all the main features and screens",
     time: "7 min read",
@@ -35,6 +38,7 @@ export const gettingStarted: Tutorial[] = [
     url: "https://docs.financefootprint.com/getting-started/dashboard-overview"
   },
   {
+    id: "financial-goals",
     title: "Setting Your Financial Goals",
     description: "How to define and track your financial objectives",
     time: "6 min read",
@@ -43,6 +47,7 @@ export const gettingStarted: Tutorial[] = [
     url: "https://docs.financefootprint.com/getting-started/financial-goals"
   },
   {
+    id: "security",
     title: "Managing Account Security",
     description: "Best practices for securing your financial data",
     time: "4 min read",
