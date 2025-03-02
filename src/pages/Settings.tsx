@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useTheme } from "next-themes";
+import { useLocation } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import { TransactionCategory } from "@/types/transaction";
 import { storageService } from "@/services/localStorage";
@@ -9,7 +10,14 @@ import SettingsMenu from "@/components/settings/SettingsMenu";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
-  const [activeModal, setActiveModal] = React.useState<ModalType>(null);
+  const location = useLocation();
+  const [activeModal, setActiveModal] = React.useState<ModalType>(() => {
+    // Check if we're coming back from a tutorial page with state
+    if (location.state?.openModal) {
+      return location.state.openModal;
+    }
+    return null;
+  });
   const [newCategory, setNewCategory] = React.useState("");
   const [categories, setCategories] = React.useState<TransactionCategory[]>([
     "Food & Dining",

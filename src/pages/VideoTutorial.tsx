@@ -21,11 +21,16 @@ const VideoTutorialPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [id]);
 
+  // Navigate back to tutorials section instead of settings
+  const handleBackClick = () => {
+    navigate("/settings", { state: { openModal: "tutorials" } });
+  };
+
   if (!video && !isLoading) {
     return (
       <MobileLayout
         title="Video Not Found"
-        leftIcon={<ChevronLeft onClick={() => navigate(-1)} />}
+        leftIcon={<ChevronLeft onClick={handleBackClick} />}
       >
         <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
           <Play className="w-16 h-16 text-muted-foreground mb-4" />
@@ -34,10 +39,10 @@ const VideoTutorialPage: React.FC = () => {
             The video tutorial you're looking for doesn't exist or has been moved.
           </p>
           <button
-            onClick={() => navigate("/settings")}
+            onClick={handleBackClick}
             className="bg-primary text-white px-4 py-2 rounded-lg"
           >
-            Back to Settings
+            Back to Tutorials
           </button>
         </div>
       </MobileLayout>
@@ -86,7 +91,7 @@ const VideoTutorialPage: React.FC = () => {
   return (
     <MobileLayout
       title={isLoading ? "Loading..." : video?.title || "Video Tutorial"}
-      leftIcon={<ChevronLeft onClick={() => navigate(-1)} />}
+      leftIcon={<ChevronLeft onClick={handleBackClick} />}
     >
       {isLoading ? (
         <div className="p-4 space-y-4">

@@ -30,12 +30,17 @@ const TutorialPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [id]);
 
+  // Navigate back to tutorials section instead of settings
+  const handleBackClick = () => {
+    navigate("/settings", { state: { openModal: "tutorials" } });
+  };
+
   // If tutorial not found
   if (!tutorial && !isLoading) {
     return (
       <MobileLayout
         title="Tutorial Not Found"
-        leftIcon={<ChevronLeft onClick={() => navigate(-1)} />}
+        leftIcon={<ChevronLeft onClick={handleBackClick} />}
       >
         <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
           <BookOpen className="w-16 h-16 text-muted-foreground mb-4" />
@@ -44,10 +49,10 @@ const TutorialPage: React.FC = () => {
             The tutorial you're looking for doesn't exist or has been moved.
           </p>
           <button
-            onClick={() => navigate("/settings")}
+            onClick={handleBackClick}
             className="bg-primary text-white px-4 py-2 rounded-lg"
           >
-            Back to Settings
+            Back to Tutorials
           </button>
         </div>
       </MobileLayout>
@@ -57,7 +62,7 @@ const TutorialPage: React.FC = () => {
   return (
     <MobileLayout
       title={isLoading ? "Loading..." : tutorial?.title || "Tutorial"}
-      leftIcon={<ChevronLeft onClick={() => navigate(-1)} />}
+      leftIcon={<ChevronLeft onClick={handleBackClick} />}
     >
       {isLoading ? (
         <div className="p-4 space-y-4">
