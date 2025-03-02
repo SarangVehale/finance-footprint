@@ -5,12 +5,28 @@ import { Home, PieChart, Clock, Settings, FileText } from "lucide-react";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  leftIcon?: React.ReactNode;
 }
 
-const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
+const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title, leftIcon }) => {
   return (
     <div className="flex flex-col min-h-dvh bg-background">
       <div className="h-safe-top bg-background" />
+      {(title || leftIcon) && (
+        <header className="sticky top-0 z-30 w-full bg-background/80 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center h-14 px-4">
+            {leftIcon && (
+              <div className="mr-2">
+                {leftIcon}
+              </div>
+            )}
+            {title && (
+              <h1 className="text-lg font-medium">{title}</h1>
+            )}
+          </div>
+        </header>
+      )}
       <main className="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
