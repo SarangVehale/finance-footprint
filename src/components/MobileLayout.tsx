@@ -27,7 +27,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title, leftIcon }
           </div>
         </header>
       )}
-      <main className="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
+      <main className="flex-1 overflow-y-auto custom-scrollbar pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
       <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm">

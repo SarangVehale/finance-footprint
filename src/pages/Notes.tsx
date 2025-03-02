@@ -202,17 +202,13 @@ const Notes = () => {
   };
 
   const getScrollbarClass = () => {
-    const baseClass = "notes-scrollbar";
-    if (hasOverflow) {
-      return `${baseClass} has-overflow`;
-    }
-    return baseClass;
+    return hasOverflow ? "notes-scrollbar has-overflow" : "notes-scrollbar";
   };
 
   return (
     <MobileLayout>
       <div 
-        className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top overflow-hidden"
+        className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top"
         ref={notesContainerRef}
       >
         <div className={getScrollbarClass()}>
