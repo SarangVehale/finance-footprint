@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   ChevronRight, 
@@ -12,7 +11,8 @@ import {
   Users,
   GraduationCap,
   Github,
-  ExternalLink
+  ExternalLink,
+  FileSpreadsheet
 } from "lucide-react";
 import { ModalType } from "./ModalContainer";
 
@@ -141,6 +141,17 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setActiveModal }) => {
           </div>
           <ExternalLink size={16} className="text-muted-foreground" />
         </a>
+
+        <button
+          onClick={() => setActiveModal("exportedFiles")}
+          className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+        >
+          <div className="flex items-center space-x-3">
+            <FileSpreadsheet className="text-muted-foreground" size={18} />
+            <span className="text-foreground text-sm sm:text-base">Exported Files</span>
+          </div>
+          <ChevronRight size={18} className="text-muted-foreground" />
+        </button>
       </div>
     </div>
   );

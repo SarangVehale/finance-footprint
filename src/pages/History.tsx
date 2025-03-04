@@ -1,4 +1,3 @@
-
 import React from "react";
 import { format } from "date-fns";
 import { DollarSign, Pencil, Trash2, X, Download } from "lucide-react";
@@ -13,6 +12,7 @@ const History = () => {
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
   const [showEditModal, setShowEditModal] = React.useState(false);
+  const [lastExportedFile, setLastExportedFile] = React.useState<{ name: string, url: string } | null>(null);
   const currency = storageService.getCurrency();
 
   React.useEffect(() => {
@@ -98,11 +98,28 @@ const History = () => {
     });
 
     const fileName = `finance_history_${format(new Date(), "yyyy_MM_dd")}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    const fileUrl = URL.createObjectURL(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    }));
 
+    const exportedFiles = JSON.parse(localStorage.getItem('exportedFiles') || '[]');
+    const newFile = { name: fileName, url: fileUrl, date: new Date().toISOString() };
+    localStorage.setItem('exportedFiles', JSON.stringify([...exportedFiles, newFile]));
+    
+    setLastExportedFile(newFile);
+
+    // Show toast with action button
     toast({
-      title: "Success",
-      description: "Transaction history exported successfully",
+      title: "Export Successful",
+      description: "Click here to open the file",
+      action: (
+        <button
+          onClick={() => window.open(fileUrl, '_blank')}
+          className="bg-primary text-primary-foreground px-3 py-1.5 rounded-md text-sm font-medium"
+        >
+          Open File
+        </button>
+      ),
     });
   };
 
@@ -140,7 +157,6 @@ const History = () => {
       <div className="p-6 bg-background">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-foreground">Transaction History</h1>
-          {/* Only make the export button responsive, not other elements */}
           <button
             onClick={exportToExcel}
             className="flex items-center space-x-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors"
