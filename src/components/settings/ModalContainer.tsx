@@ -10,6 +10,7 @@ import HelpSupportModal from "./HelpSupportModal";
 import AboutModal from "./AboutModal";
 import GuideModal from "./GuideModal";
 import FAQModal from "./FAQModal";
+import ExportedFilesModal from "./ExportedFilesModal";
 import { TransactionCategory } from "@/types/transaction";
 
 export type ModalType = 
@@ -23,6 +24,7 @@ export type ModalType =
   | "faq" 
   | "forum" 
   | "tutorials" 
+  | "exportedFiles"
   | null;
 
 interface ModalContainerProps {
@@ -76,6 +78,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
       case "faq": return "Frequently Asked Questions";
       case "forum": return "Community Forum";
       case "tutorials": return "Tutorials & Guides";
+      case "exportedFiles": return "Exported Files";
       default: return "";
     }
   };
@@ -106,6 +109,8 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
         return <ForumModal />;
       case "tutorials":
         return <TutorialsModal />;
+      case "exportedFiles":
+        return <ExportedFilesModal />;
       default:
         return null;
     }
