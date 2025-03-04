@@ -22,6 +22,7 @@ const Notes = () => {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isViewingNote, setIsViewingNote] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
+  const [isProcessingNote, setIsProcessingNote] = useState(false);
 
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -87,11 +88,14 @@ const Notes = () => {
   }, [newNote, showNewNote, isViewingNote]);
 
   const handleAddNote = (autoSave = false) => {
+    if (isProcessingNote) return; // Prevent duplicate notes when processing
     if (!newNote.title && !newNote.content && newNote.checklist.length === 0) {
       if (!autoSave) setShowNewNote(false);
       return;
     }
 
+    setIsProcessingNote(true);
+    
     const note: Note = {
       id: crypto.randomUUID(),
       title: newNote.title || "Untitled",
@@ -111,6 +115,10 @@ const Notes = () => {
       setNewNote({ title: "", content: "", checklist: [] });
       setShowNewNote(false);
     }
+    
+    setTimeout(() => {
+      setIsProcessingNote(false);
+    }, 500); // Debounce to prevent multiple submissions
   };
 
   const handleDeleteNote = (id: string, e?: React.MouseEvent) => {
@@ -214,9 +222,9 @@ const Notes = () => {
         <div className={getScrollbarClass()}>
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+          <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {filteredNotes.map((note) => (
-              <div key={note.id} onClick={() => handleViewNote(note)}>
+              <div key={note.id} onClick={() => handleViewNote(note)} className="h-full">
                 <NoteCard
                   note={note}
                   onDelete={(e) => handleDeleteNote(note.id, e)}
@@ -229,7 +237,7 @@ const Notes = () => {
           {filteredNotes.length === 0 && !searchTerm && (
             <div className="flex flex-col items-center justify-center pt-10 pb-16 text-center">
               <div className="bg-accent/50 p-6 rounded-2xl mb-4">
-                <FileText className="w-12 h-12 text-muted-foreground" />
+                <FileText className="w-10 h-10 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium mb-2">No notes yet</h3>
               <p className="text-muted-foreground text-sm max-w-xs">
@@ -252,9 +260,9 @@ const Notes = () => {
             setNoteType("text");
             setNewNote({ title: "", content: "", checklist: [] });
           }}
-          className="fixed bottom-24 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 animate-float flex items-center justify-center"
+          className="fixed bottom-24 right-6 w-12 h-12 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 animate-float flex items-center justify-center"
         >
-          <Plus size={24} />
+          <Plus size={20} />
         </button>
 
         <NoteModal
