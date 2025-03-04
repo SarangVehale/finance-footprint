@@ -66,6 +66,21 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [setActiveModal]);
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveModal(null);
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscKey);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [setActiveModal]);
   
   const getModalTitle = () => {
     switch (activeModal) {
@@ -118,21 +133,25 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-      <div ref={modalContentRef} className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden animate-slide-up">
-        <div className="flex justify-between items-center p-3 sm:p-4 border-b border-border">
+      <div 
+        ref={modalContentRef} 
+        className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-lg overflow-hidden animate-slide-up transition-all duration-300"
+      >
+        <div className="flex justify-between items-center p-3 sm:p-4 border-b border-border sticky top-0 bg-card/95 backdrop-blur-sm">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">
             {getModalTitle()}
           </h2>
           <button
             onClick={() => setActiveModal(null)}
-            className="p-1.5 sm:p-2 hover:bg-accent rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-accent rounded-lg transition-colors active:scale-95"
+            aria-label="Close modal"
           >
             <X size={18} className="sm:hidden text-muted-foreground" />
             <X size={20} className="hidden sm:block text-muted-foreground" />
           </button>
         </div>
 
-        <div className="p-4 max-h-[80vh] overflow-y-auto">
+        <div className="p-4 sm:p-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
           {renderModalContent()}
         </div>
       </div>

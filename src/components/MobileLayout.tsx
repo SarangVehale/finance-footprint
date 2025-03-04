@@ -1,28 +1,98 @@
 
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Home, PieChart, Clock, Settings, FileText } from "lucide-react";
+import React, { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, PieChart, Clock, Settings, FileText, ArrowLeft } from "lucide-react";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
   title?: string;
   leftIcon?: React.ReactNode;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
 
-const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title, leftIcon }) => {
+const MobileLayout: React.FC<MobileLayoutProps> = ({ 
+  children, 
+  title, 
+  leftIcon, 
+  showBackButton, 
+  onBackClick 
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/" || location.pathname === "/home";
+  
+  // Handle hardware back button for Android
+  useEffect(() => {
+    let backButtonPressCount = 0;
+    let backButtonTimer: NodeJS.Timeout;
+    
+    const handleBackButton = (event: PopStateEvent) => {
+      // Prevent default back navigation
+      event.preventDefault();
+      
+      if (onBackClick) {
+        onBackClick();
+        return;
+      }
+      
+      if (isHomePage) {
+        backButtonPressCount++;
+        
+        if (backButtonPressCount === 1) {
+          // Show "Press again to exit" toast or notification
+          // This would be implemented in a real mobile app
+          console.log("Press back again to exit the application");
+          
+          backButtonTimer = setTimeout(() => {
+            backButtonPressCount = 0;
+          }, 2000);
+        } else if (backButtonPressCount >= 2) {
+          // In a real app, this would exit the application
+          console.log("Exiting application");
+          backButtonPressCount = 0;
+          clearTimeout(backButtonTimer);
+        }
+      } else {
+        navigate(-1);
+      }
+    };
+    
+    window.addEventListener('popstate', handleBackButton);
+    
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+      if (backButtonTimer) clearTimeout(backButtonTimer);
+    };
+  }, [navigate, isHomePage, onBackClick]);
+
+  const handleBackButtonClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const defaultLeftIcon = showBackButton ? (
+    <button 
+      onClick={handleBackButtonClick}
+      className="p-2 rounded-full hover:bg-accent/50 active:scale-95 transition-all"
+      aria-label="Go back"
+    >
+      <ArrowLeft size={20} className="text-foreground" />
+    </button>
+  ) : null;
+
   return (
     <div className="flex flex-col min-h-dvh bg-background">
       <div className="h-safe-top bg-background" />
-      {(title || leftIcon) && (
+      {(title || leftIcon || showBackButton) && (
         <header className="sticky top-0 z-30 w-full bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="flex items-center h-14 px-4">
-            {leftIcon && (
-              <div className="mr-2">
-                {leftIcon}
-              </div>
-            )}
+            {leftIcon || defaultLeftIcon}
             {title && (
-              <h1 className="text-lg font-medium">{title}</h1>
+              <h1 className="text-lg font-medium ml-2">{title}</h1>
             )}
           </div>
         </header>
@@ -54,7 +124,7 @@ const NavLink: React.FC<NavLinkProps> = ({ to, icon, label }) => {
   return (
     <Link
       to={to}
-      className={`flex flex-col items-center justify-center space-y-1 transition-all duration-200 rounded-lg p-2 hover:bg-accent/50 ${
+      className={`flex flex-col items-center justify-center space-y-1 transition-all duration-200 rounded-lg p-2 hover:bg-accent/50 active:scale-95 ${
         isActive 
           ? "text-mint-500 scale-105" 
           : "text-muted-foreground hover:text-mint-400"

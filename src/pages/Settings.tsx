@@ -1,16 +1,20 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "next-themes";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import { TransactionCategory } from "@/types/transaction";
 import { storageService } from "@/services/localStorage";
 import ModalContainer, { ModalType } from "@/components/settings/ModalContainer";
 import SettingsMenu from "@/components/settings/SettingsMenu";
+import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const [activeModal, setActiveModal] = React.useState<ModalType>(() => {
     // Check if we're coming back from a tutorial page with state
     if (location.state?.openModal) {
@@ -18,7 +22,6 @@ const Settings = () => {
     }
     return null;
   });
-  const [newCategory, setNewCategory] = React.useState("");
   const [categories, setCategories] = React.useState<TransactionCategory[]>([
     "Food & Dining",
     "Transportation",
@@ -35,19 +38,41 @@ const Settings = () => {
 
   const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
     setTheme(newTheme);
+    toast({
+      title: "Theme Updated",
+      description: `Theme set to ${newTheme} mode`,
+      duration: 2000,
+    });
   };
 
   const handleCurrencyChange = (newCurrency: string) => {
     setCurrency(newCurrency);
     storageService.setCurrency(newCurrency);
+    toast({
+      title: "Currency Updated",
+      description: `Currency set to ${newCurrency}`,
+      duration: 2000,
+    });
     setActiveModal(null); // Auto-close the modal
   };
 
-  return (
-    <MobileLayout>
-      <div className="p-4 sm:p-6 space-y-4 bg-background pt-safe-top">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground animate-fade-in">Settings</h1>
+  // Handle back button logic for settings submenus
+  const handleBackClick = () => {
+    if (activeModal) {
+      setActiveModal(null); // Go back to main settings if in a modal
+      return;
+    }
+    
+    navigate('/home'); // Go back to home if on main settings page
+  };
 
+  return (
+    <MobileLayout 
+      showBackButton={true}
+      onBackClick={handleBackClick}
+      title="Settings"
+    >
+      <div className="p-4 sm:p-6 space-y-4 bg-background">
         <SettingsMenu setActiveModal={setActiveModal} />
 
         <ModalContainer 
