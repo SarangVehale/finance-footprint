@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from "react";
 import { Plus, FileText } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
@@ -24,17 +25,23 @@ const Notes = () => {
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isProcessingNote, setIsProcessingNote] = useState(false);
 
+  // Fix: Safely filter notes to handle possible undefined checklist values
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.checklist?.some(item => 
+    (note.checklist && note.checklist.some(item => 
       item.text.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    ))
   );
 
   useEffect(() => {
     const loadedNotes = storageService.getNotes();
-    setNotes(loadedNotes);
+    // Ensure all notes have a valid checklist array
+    const validatedNotes = loadedNotes.map(note => ({
+      ...note,
+      checklist: note.checklist || []
+    }));
+    setNotes(validatedNotes);
   }, []);
 
   useEffect(() => {
@@ -100,7 +107,7 @@ const Notes = () => {
       id: crypto.randomUUID(),
       title: newNote.title || "Untitled",
       content: noteType === "text" ? newNote.content : "",
-      checklist: noteType === "checklist" ? newNote.checklist : [],
+      checklist: noteType === "checklist" ? [...newNote.checklist] : [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       type: noteType,
@@ -167,21 +174,27 @@ const Notes = () => {
   };
 
   const handleViewNote = (note: Note) => {
-    setSelectedNote(note);
+    // Ensure note has a valid checklist array
+    const safeNote = {
+      ...note,
+      checklist: note.checklist || []
+    };
+    
+    setSelectedNote(safeNote);
     setIsViewingNote(true);
     
-    if (note.type === "checklist") {
+    if (safeNote.type === "checklist") {
       setNoteType("checklist");
       setNewNote({
-        title: note.title,
+        title: safeNote.title,
         content: "",
-        checklist: [...note.checklist]
+        checklist: [...safeNote.checklist]
       });
     } else {
       setNoteType("text");
       setNewNote({
-        title: note.title,
-        content: note.content,
+        title: safeNote.title,
+        content: safeNote.content,
         checklist: []
       });
     }
@@ -194,7 +207,7 @@ const Notes = () => {
       ...selectedNote,
       title: newNote.title || "Untitled",
       content: noteType === "text" ? newNote.content : "",
-      checklist: noteType === "checklist" ? newNote.checklist : [],
+      checklist: noteType === "checklist" ? [...newNote.checklist] : [],
       updatedAt: new Date().toISOString(),
       type: noteType
     };
@@ -214,7 +227,7 @@ const Notes = () => {
   };
 
   return (
-    <MobileLayout>
+    <MobileLayout title="Notes">
       <div 
         className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top"
         ref={notesContainerRef}
