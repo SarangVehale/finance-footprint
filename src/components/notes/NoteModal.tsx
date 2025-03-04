@@ -44,7 +44,6 @@ const NoteModal = ({
   const isMobile = window.innerWidth < 640;
 
   useEffect(() => {
-    // Handle click outside of modal content to close it
     const handleOutsideClick = (event: MouseEvent) => {
       if (modalContentRef.current && 
           !modalContentRef.current.contains(event.target as Node) && 
@@ -62,10 +61,8 @@ const NoteModal = ({
 
   useEffect(() => {
     if (show) {
-      // When modal opens, add class to handle virtual keyboard
       document.body.classList.add('keyboard-open');
       
-      // Scroll modal into view
       setTimeout(() => {
         modalRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -73,21 +70,17 @@ const NoteModal = ({
       document.body.classList.remove('keyboard-open');
     }
 
-    // Function to handle keyboard open/close
     const handleResize = () => {
       const viewportHeight = window.innerHeight;
       const windowHeight = window.outerHeight;
       
-      // Detect if keyboard is likely open
       if (windowHeight > viewportHeight * 1.2) {
-        // Keyboard is likely open
         if (noteType === 'text' && contentRef.current) {
           contentRef.current.style.height = `${viewportHeight * 0.4}px`;
         } else if (noteType === 'checklist' && checklistContainerRef.current) {
           checklistContainerRef.current.style.maxHeight = `${viewportHeight * 0.4}px`;
         }
       } else {
-        // Keyboard is likely closed
         if (noteType === 'text' && contentRef.current) {
           contentRef.current.style.height = '300px';
         } else if (noteType === 'checklist' && checklistContainerRef.current) {
@@ -98,7 +91,6 @@ const NoteModal = ({
 
     window.addEventListener('resize', handleResize);
     
-    // Initial check
     handleResize();
 
     return () => {
@@ -175,9 +167,10 @@ const NoteModal = ({
             <textarea
               ref={contentRef}
               placeholder="Start typing..."
-              className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64"
+              className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64 overflow-wrap-anywhere whitespace-pre-wrap break-words"
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
+              style={{ overflowX: 'hidden', wordWrap: 'break-word', width: '100%' }}
             />
           ) : (
             <div ref={checklistContainerRef} className="space-y-2 overflow-y-auto pb-20">
@@ -195,7 +188,8 @@ const NoteModal = ({
                     onChange={(e) => onChecklistItemChange(index, e.target.value)}
                     onKeyDown={(e) => onChecklistKeyDown(e, index)}
                     placeholder="List item..."
-                    className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
+                    className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input overflow-ellipsis"
+                    style={{ overflowX: 'hidden', textOverflow: 'ellipsis', width: '100%' }}
                   />
                 </div>
               ))}
@@ -210,7 +204,6 @@ const NoteModal = ({
           )}
         </div>
 
-        {/* Auto-saving indicator at the bottom */}
         {autoSave && (
           <div className="flex items-center justify-center p-2 border-t border-border mt-auto text-xs text-muted-foreground">
             Auto-saving...

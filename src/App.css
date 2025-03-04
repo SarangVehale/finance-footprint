@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -41,4 +42,16 @@
   color: #888;
 }
 
-/* Custom scrollbar styles are now in index.css */
+/* Ensure text wraps properly in all text inputs and textareas */
+input[type="text"],
+textarea {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+}
