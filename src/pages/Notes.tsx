@@ -1,12 +1,13 @@
-
 import React, { useRef, useEffect, useState } from "react";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Download } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
 import { Note } from "@/types/note";
 import SearchBar from "@/components/notes/SearchBar";
 import NoteCard from "@/components/notes/NoteCard";
 import NoteModal from "@/components/notes/NoteModal";
+import { useToast } from "@/hooks/use-toast";
+import * as XLSX from 'xlsx';
 
 const Notes = () => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ const Notes = () => {
   const [isViewingNote, setIsViewingNote] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isProcessingNote, setIsProcessingNote] = useState(false);
+  const { toast } = useToast();
 
   // Fix: Safely filter notes to handle possible undefined checklist values
   const filteredNotes = notes.filter(note =>
@@ -44,17 +46,27 @@ const Notes = () => {
     setNotes(validatedNotes);
   }, []);
 
+  // Fix the overflow detection
   useEffect(() => {
     const checkOverflow = () => {
       if (notesContainerRef.current) {
-        const hasVerticalOverflow = notesContainerRef.current.scrollHeight > notesContainerRef.current.clientHeight;
+        const containerHeight = notesContainerRef.current.clientHeight;
+        const contentHeight = notesContainerRef.current.scrollHeight;
+        const hasVerticalOverflow = contentHeight > containerHeight;
         setHasOverflow(hasVerticalOverflow);
       }
     };
 
     checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
+    // Use ResizeObserver for better detection of size changes
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (notesContainerRef.current) {
+      resizeObserver.observe(notesContainerRef.current);
+    }
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, [notes, searchTerm, filteredNotes]);
 
   useEffect(() => {
@@ -137,6 +149,11 @@ const Notes = () => {
       setSelectedNote(null);
       setIsViewingNote(false);
     }
+    
+    toast({
+      title: "Note deleted",
+      description: "Your note has been removed"
+    });
   };
 
   const handleToggleCheckItem = (noteId: string, index: number, checked: boolean) => {
@@ -222,48 +239,137 @@ const Notes = () => {
     }
   };
 
+  const handleExportNotes = () => {
+    try {
+      // Convert notes to a format suitable for export
+      const exportData = notes.map(note => {
+        if (note.type === 'checklist' && note.checklist) {
+          // For checklist notes, format the checklist items
+          const checklistText = note.checklist.map(item => 
+            `${item.checked ? '☑' : '☐'} ${item.text}`
+          ).join('\n');
+          
+          return {
+            Title: note.title,
+            Type: 'Checklist',
+            Content: checklistText,
+            Created: new Date(note.createdAt).toLocaleString(),
+            Updated: new Date(note.updatedAt).toLocaleString()
+          };
+        } else {
+          // For text notes
+          return {
+            Title: note.title,
+            Type: 'Text',
+            Content: note.content,
+            Created: new Date(note.createdAt).toLocaleString(),
+            Updated: new Date(note.updatedAt).toLocaleString()
+          };
+        }
+      });
+
+      // Create a worksheet from the data
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      
+      // Create a workbook and add the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Notes');
+      
+      // Generate file name with date
+      const fileName = `notes_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      // For mobile and web compatibility
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // For mobile, generate a blob URL and open it
+        XLSX.writeFile(workbook, fileName);
+        
+        // Store the exported file in localStorage for later access
+        const storedFiles = JSON.parse(localStorage.getItem('exportedFiles') || '[]');
+        const newFile = {
+          name: fileName,
+          url: window.location.href, // This is a placeholder since we can't get the actual file URL
+          date: new Date().toISOString()
+        };
+        localStorage.setItem('exportedFiles', JSON.stringify([...storedFiles, newFile]));
+      } else {
+        // For desktop browsers
+        XLSX.writeFile(workbook, fileName);
+      }
+
+      toast({
+        title: "Export Successful",
+        description: "Your notes have been exported to an Excel file"
+      });
+    } catch (error) {
+      console.error("Export error:", error);
+      toast({
+        title: "Export Failed",
+        description: "There was a problem exporting your notes",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getScrollbarClass = () => {
     return hasOverflow ? "notes-scrollbar has-overflow" : "notes-scrollbar";
   };
 
   return (
     <MobileLayout title="Notes">
-      <div 
-        className="p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background min-h-dvh pb-24 pt-safe-top"
-        ref={notesContainerRef}
-      >
-        <div className={getScrollbarClass()}>
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
-
-          <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {filteredNotes.map((note) => (
-              <div key={note.id} onClick={() => handleViewNote(note)} className="h-full">
-                <NoteCard
-                  note={note}
-                  onDelete={(e) => handleDeleteNote(note.id, e)}
-                  onToggleCheckItem={handleToggleCheckItem}
-                />
-              </div>
-            ))}
+      <div className="bg-background min-h-dvh w-full">
+        {/* Main container with proper overflow handling */}
+        <div 
+          ref={notesContainerRef}
+          className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden"
+        >
+          <div className="p-4 sm:p-6 space-y-4 flex-shrink-0">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-semibold">My Notes</h2>
+              <button
+                onClick={handleExportNotes}
+                className="flex items-center text-sm text-muted-foreground hover:text-foreground"
+                aria-label="Export notes"
+              >
+                <Download size={18} className="mr-1" />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+            </div>
+            <SearchBar value={searchTerm} onChange={setSearchTerm} />
           </div>
 
-          {filteredNotes.length === 0 && !searchTerm && (
-            <div className="flex flex-col items-center justify-center pt-10 pb-16 text-center">
-              <div className="bg-accent/50 p-6 rounded-2xl mb-4">
-                <FileText className="w-10 h-10 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">No notes yet</h3>
-              <p className="text-muted-foreground text-sm max-w-xs">
-                Create your first note by clicking the + button below
-              </p>
+          <div className={`px-4 sm:px-6 pb-24 flex-1 overflow-y-auto ${getScrollbarClass()}`}>
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {filteredNotes.map((note) => (
+                <div key={note.id} onClick={() => handleViewNote(note)} className="h-full">
+                  <NoteCard
+                    note={note}
+                    onDelete={(e) => handleDeleteNote(note.id, e)}
+                    onToggleCheckItem={handleToggleCheckItem}
+                  />
+                </div>
+              ))}
             </div>
-          )}
 
-          {filteredNotes.length === 0 && searchTerm && (
-            <div className="text-center py-10">
-              <p className="text-muted-foreground">No notes found</p>
-            </div>
-          )}
+            {filteredNotes.length === 0 && !searchTerm && (
+              <div className="flex flex-col items-center justify-center pt-10 pb-16 text-center">
+                <div className="bg-accent/50 p-6 rounded-2xl mb-4">
+                  <FileText className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-medium mb-2">No notes yet</h3>
+                <p className="text-muted-foreground text-sm max-w-xs">
+                  Create your first note by clicking the + button below
+                </p>
+              </div>
+            )}
+
+            {filteredNotes.length === 0 && searchTerm && (
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">No notes found</p>
+              </div>
+            )}
+          </div>
         </div>
 
         <button

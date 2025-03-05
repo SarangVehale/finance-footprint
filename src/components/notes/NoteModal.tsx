@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { X, FileText, CheckSquare, Plus, ArrowLeft } from 'lucide-react';
 
@@ -43,6 +44,7 @@ const NoteModal = ({
   const modalContentRef = useRef<HTMLDivElement>(null);
   const isMobile = window.innerWidth < 640;
 
+  // Handle outside clicks
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (modalContentRef.current && 
@@ -59,28 +61,39 @@ const NoteModal = ({
     };
   }, [show, onClose]);
 
+  // Fix keyboard and view issues
   useEffect(() => {
     if (show) {
       document.body.classList.add('keyboard-open');
       
+      // Smooth scroll to modal when opened
       setTimeout(() => {
         modalRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
+      
+      // Fix for iOS textarea selection issues
+      if (contentRef.current && noteType === 'text') {
+        contentRef.current.style.webkitUserSelect = 'text';
+        contentRef.current.style.userSelect = 'text';
+      }
     } else {
       document.body.classList.remove('keyboard-open');
     }
 
+    // Adjust height based on viewport
     const handleResize = () => {
       const viewportHeight = window.innerHeight;
       const windowHeight = window.outerHeight;
       
       if (windowHeight > viewportHeight * 1.2) {
+        // Keyboard is likely open
         if (noteType === 'text' && contentRef.current) {
           contentRef.current.style.height = `${viewportHeight * 0.4}px`;
         } else if (noteType === 'checklist' && checklistContainerRef.current) {
           checklistContainerRef.current.style.maxHeight = `${viewportHeight * 0.4}px`;
         }
       } else {
+        // Keyboard is likely closed
         if (noteType === 'text' && contentRef.current) {
           contentRef.current.style.height = '300px';
         } else if (noteType === 'checklist' && checklistContainerRef.current) {
@@ -97,7 +110,53 @@ const NoteModal = ({
       document.body.classList.remove('keyboard-open');
       window.removeEventListener('resize', handleResize);
     };
-  }, [show, noteType]);
+  }, [show, noteType, modalRef]);
+
+  // Fix for copy-paste duplication in mobile
+  useEffect(() => {
+    const fixDuplicatePaste = () => {
+      if (contentRef.current) {
+        const textarea = contentRef.current;
+        
+        // Custom paste handler
+        const handlePaste = (e: ClipboardEvent) => {
+          // Mobile browsers might trigger multiple paste events
+          e.preventDefault();
+          
+          const clipboardData = e.clipboardData;
+          if (!clipboardData) return;
+          
+          const pastedText = clipboardData.getData('text/plain');
+          
+          // Insert at cursor position
+          const start = textarea.selectionStart || 0;
+          const end = textarea.selectionEnd || 0;
+          const textBefore = content.substring(0, start);
+          const textAfter = content.substring(end);
+          
+          // Set the new content
+          onContentChange(textBefore + pastedText + textAfter);
+          
+          // Set cursor position after paste
+          setTimeout(() => {
+            const newCursorPos = start + pastedText.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+          }, 0);
+        };
+        
+        textarea.addEventListener('paste', handlePaste);
+        
+        return () => {
+          textarea.removeEventListener('paste', handlePaste);
+        };
+      }
+    };
+    
+    if (noteType === 'text' && show) {
+      const cleanup = fixDuplicatePaste();
+      return cleanup;
+    }
+  }, [noteType, show, content, onContentChange]);
 
   if (!show) return null;
 
@@ -167,20 +226,29 @@ const NoteModal = ({
             <textarea
               ref={contentRef}
               placeholder="Start typing..."
-              className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64 overflow-wrap-anywhere whitespace-pre-wrap break-words"
+              className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64 break-words"
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
-              style={{ overflowX: 'hidden', wordWrap: 'break-word', width: '100%' }}
+              style={{ 
+                overflowX: 'hidden', 
+                wordWrap: 'break-word', 
+                width: '100%',
+                WebkitAppearance: 'none',
+                WebkitTapHighlightColor: 'transparent'
+              }}
             />
           ) : (
-            <div ref={checklistContainerRef} className="space-y-2 overflow-y-auto pb-20">
+            <div 
+              ref={checklistContainerRef} 
+              className="space-y-2 overflow-y-auto pb-20"
+            >
               {checklist.map((item, index) => (
                 <div key={index} className="flex items-center space-x-2 animate-slide-in">
                   <input
                     type="checkbox"
                     checked={item.checked}
                     onChange={() => onChecklistItemToggle(index)}
-                    className="rounded-lg border-input"
+                    className="rounded-lg border-input w-5 h-5"
                   />
                   <input
                     type="text"
@@ -188,8 +256,11 @@ const NoteModal = ({
                     onChange={(e) => onChecklistItemChange(index, e.target.value)}
                     onKeyDown={(e) => onChecklistKeyDown(e, index)}
                     placeholder="List item..."
-                    className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input overflow-ellipsis"
-                    style={{ overflowX: 'hidden', textOverflow: 'ellipsis', width: '100%' }}
+                    className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
+                    style={{ 
+                      textOverflow: 'ellipsis',
+                      WebkitAppearance: 'none'
+                    }}
                   />
                 </div>
               ))}
