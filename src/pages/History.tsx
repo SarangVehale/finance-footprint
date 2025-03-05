@@ -1,3 +1,4 @@
+
 import React from "react";
 import { format } from "date-fns";
 import { DollarSign, Pencil, Trash2, X, Download } from "lucide-react";
@@ -98,29 +99,62 @@ const History = () => {
     });
 
     const fileName = `finance_history_${format(new Date(), "yyyy_MM_dd")}.xlsx`;
-    const fileUrl = URL.createObjectURL(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    }));
-
-    const exportedFiles = JSON.parse(localStorage.getItem('exportedFiles') || '[]');
-    const newFile = { name: fileName, url: fileUrl, date: new Date().toISOString() };
-    localStorage.setItem('exportedFiles', JSON.stringify([...exportedFiles, newFile]));
     
-    setLastExportedFile(newFile);
-
-    // Show toast with action button
-    toast({
-      title: "Export Successful",
-      description: "Click here to open the file",
-      action: (
-        <button
-          onClick={() => window.open(fileUrl, '_blank')}
-          className="bg-primary text-primary-foreground px-3 py-1.5 rounded-md text-sm font-medium"
-        >
-          Open File
-        </button>
-      ),
-    });
+    // Updated export code to better handle mobile devices
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // For mobile devices, use writeFile directly which creates a download
+      try {
+        XLSX.writeFile(wb, fileName);
+        
+        toast({
+          title: "Export Successful",
+          description: "File has been downloaded to your device",
+        });
+      } catch (error) {
+        console.error("Export error:", error);
+        
+        // Fallback method using Blob URL
+        const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = fileName;
+        downloadLink.click();
+        
+        toast({
+          title: "Export Successful",
+          description: "Please check your downloads folder",
+        });
+      }
+    } else {
+      // For desktop, use the blob URL method
+      const fileUrl = URL.createObjectURL(new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }));
+      
+      // Create and click a download link
+      const downloadLink = document.createElement('a');
+      downloadLink.href = fileUrl;
+      downloadLink.download = fileName;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      // Store the exported file for later access
+      const exportedFiles = JSON.parse(localStorage.getItem('exportedFiles') || '[]');
+      const newFile = { name: fileName, url: fileUrl, date: new Date().toISOString() };
+      localStorage.setItem('exportedFiles', JSON.stringify([...exportedFiles, newFile]));
+      setLastExportedFile(newFile);
+      
+      toast({
+        title: "Export Successful",
+        description: "File has been downloaded",
+      });
+    }
   };
 
   const handleDeleteTransaction = (id: string) => {

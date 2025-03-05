@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Plus, FileText, Download } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import MobileLayout from "@/components/MobileLayout";
 import { storageService } from "@/services/localStorage";
 import { Note } from "@/types/note";
@@ -7,7 +7,6 @@ import SearchBar from "@/components/notes/SearchBar";
 import NoteCard from "@/components/notes/NoteCard";
 import NoteModal from "@/components/notes/NoteModal";
 import { useToast } from "@/hooks/use-toast";
-import * as XLSX from 'xlsx';
 
 const Notes = () => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -27,7 +26,6 @@ const Notes = () => {
   const [isProcessingNote, setIsProcessingNote] = useState(false);
   const { toast } = useToast();
 
-  // Fix: Safely filter notes to handle possible undefined checklist values
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,7 +36,6 @@ const Notes = () => {
 
   useEffect(() => {
     const loadedNotes = storageService.getNotes();
-    // Ensure all notes have a valid checklist array
     const validatedNotes = loadedNotes.map(note => ({
       ...note,
       checklist: note.checklist || []
@@ -46,7 +43,6 @@ const Notes = () => {
     setNotes(validatedNotes);
   }, []);
 
-  // Fix the overflow detection
   useEffect(() => {
     const checkOverflow = () => {
       if (notesContainerRef.current) {
@@ -58,7 +54,6 @@ const Notes = () => {
     };
 
     checkOverflow();
-    // Use ResizeObserver for better detection of size changes
     const resizeObserver = new ResizeObserver(checkOverflow);
     if (notesContainerRef.current) {
       resizeObserver.observe(notesContainerRef.current);
@@ -72,7 +67,6 @@ const Notes = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        // Auto-save when clicking outside
         if (showNewNote) {
           handleAddNote();
         } else if (isViewingNote) {
@@ -96,18 +90,18 @@ const Notes = () => {
     const autoSaveTimer = setTimeout(() => {
       if (showNewNote) {
         if (newNote.title || newNote.content || newNote.checklist.length > 0) {
-          handleAddNote(true); // Pass true to indicate auto-save (no close)
+          handleAddNote(true);
         }
       } else if (isViewingNote && selectedNote) {
-        handleUpdateNote(true); // Pass true to indicate auto-save (no close)
+        handleUpdateNote(true);
       }
-    }, 1500); // 1.5 seconds after last change
-    
+    }, 1500);
+
     return () => clearTimeout(autoSaveTimer);
   }, [newNote, showNewNote, isViewingNote]);
 
   const handleAddNote = (autoSave = false) => {
-    if (isProcessingNote) return; // Prevent duplicate notes when processing
+    if (isProcessingNote) return;
     if (!newNote.title && !newNote.content && newNote.checklist.length === 0) {
       if (!autoSave) setShowNewNote(false);
       return;
@@ -137,7 +131,7 @@ const Notes = () => {
     
     setTimeout(() => {
       setIsProcessingNote(false);
-    }, 500); // Debounce to prevent multiple submissions
+    }, 500);
   };
 
   const handleDeleteNote = (id: string, e?: React.MouseEvent) => {
@@ -191,7 +185,6 @@ const Notes = () => {
   };
 
   const handleViewNote = (note: Note) => {
-    // Ensure note has a valid checklist array
     const safeNote = {
       ...note,
       checklist: note.checklist || []
@@ -239,79 +232,6 @@ const Notes = () => {
     }
   };
 
-  const handleExportNotes = () => {
-    try {
-      // Convert notes to a format suitable for export
-      const exportData = notes.map(note => {
-        if (note.type === 'checklist' && note.checklist) {
-          // For checklist notes, format the checklist items
-          const checklistText = note.checklist.map(item => 
-            `${item.checked ? '☑' : '☐'} ${item.text}`
-          ).join('\n');
-          
-          return {
-            Title: note.title,
-            Type: 'Checklist',
-            Content: checklistText,
-            Created: new Date(note.createdAt).toLocaleString(),
-            Updated: new Date(note.updatedAt).toLocaleString()
-          };
-        } else {
-          // For text notes
-          return {
-            Title: note.title,
-            Type: 'Text',
-            Content: note.content,
-            Created: new Date(note.createdAt).toLocaleString(),
-            Updated: new Date(note.updatedAt).toLocaleString()
-          };
-        }
-      });
-
-      // Create a worksheet from the data
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      
-      // Create a workbook and add the worksheet
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Notes');
-      
-      // Generate file name with date
-      const fileName = `notes_export_${new Date().toISOString().split('T')[0]}.xlsx`;
-      
-      // For mobile and web compatibility
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        // For mobile, generate a blob URL and open it
-        XLSX.writeFile(workbook, fileName);
-        
-        // Store the exported file in localStorage for later access
-        const storedFiles = JSON.parse(localStorage.getItem('exportedFiles') || '[]');
-        const newFile = {
-          name: fileName,
-          url: window.location.href, // This is a placeholder since we can't get the actual file URL
-          date: new Date().toISOString()
-        };
-        localStorage.setItem('exportedFiles', JSON.stringify([...storedFiles, newFile]));
-      } else {
-        // For desktop browsers
-        XLSX.writeFile(workbook, fileName);
-      }
-
-      toast({
-        title: "Export Successful",
-        description: "Your notes have been exported to an Excel file"
-      });
-    } catch (error) {
-      console.error("Export error:", error);
-      toast({
-        title: "Export Failed",
-        description: "There was a problem exporting your notes",
-        variant: "destructive"
-      });
-    }
-  };
-
   const getScrollbarClass = () => {
     return hasOverflow ? "notes-scrollbar has-overflow" : "notes-scrollbar";
   };
@@ -319,7 +239,6 @@ const Notes = () => {
   return (
     <MobileLayout title="Notes">
       <div className="bg-background min-h-dvh w-full">
-        {/* Main container with proper overflow handling */}
         <div 
           ref={notesContainerRef}
           className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden"
@@ -327,14 +246,6 @@ const Notes = () => {
           <div className="p-4 sm:p-6 space-y-4 flex-shrink-0">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold">My Notes</h2>
-              <button
-                onClick={handleExportNotes}
-                className="flex items-center text-sm text-muted-foreground hover:text-foreground"
-                aria-label="Export notes"
-              >
-                <Download size={18} className="mr-1" />
-                <span className="hidden sm:inline">Export</span>
-              </button>
             </div>
             <SearchBar value={searchTerm} onChange={setSearchTerm} />
           </div>
