@@ -40,9 +40,11 @@ const NoteModal = ({
   modalRef
 }: NoteModalProps) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const checklistContainerRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const isMobile = window.innerWidth < 640;
+  const [processingPaste, setProcessingPaste] = React.useState(false);
 
   // Handle outside clicks
   useEffect(() => {
@@ -71,10 +73,15 @@ const NoteModal = ({
         modalRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
       
-      // Fix for iOS textarea selection issues
-      if (contentRef.current && noteType === 'text') {
+      // Fix for selection issues
+      if (contentRef.current) {
         contentRef.current.style.webkitUserSelect = 'text';
         contentRef.current.style.userSelect = 'text';
+      }
+      
+      if (titleInputRef.current) {
+        titleInputRef.current.style.webkitUserSelect = 'text';
+        titleInputRef.current.style.userSelect = 'text';
       }
     } else {
       document.body.classList.remove('keyboard-open');
@@ -112,51 +119,67 @@ const NoteModal = ({
     };
   }, [show, noteType, modalRef]);
 
-  // Fix for copy-paste duplication in mobile
+  // Fix for copy-paste duplication in mobile - completely rewritten to fix the issue
   useEffect(() => {
-    const fixDuplicatePaste = () => {
-      if (contentRef.current) {
-        const textarea = contentRef.current;
-        
-        // Custom paste handler
-        const handlePaste = (e: ClipboardEvent) => {
-          // Mobile browsers might trigger multiple paste events
-          e.preventDefault();
-          
-          const clipboardData = e.clipboardData;
-          if (!clipboardData) return;
-          
-          const pastedText = clipboardData.getData('text/plain');
-          
-          // Insert at cursor position
-          const start = textarea.selectionStart || 0;
-          const end = textarea.selectionEnd || 0;
-          const textBefore = content.substring(0, start);
-          const textAfter = content.substring(end);
-          
-          // Set the new content
-          onContentChange(textBefore + pastedText + textAfter);
-          
-          // Set cursor position after paste
-          setTimeout(() => {
-            const newCursorPos = start + pastedText.length;
-            textarea.setSelectionRange(newCursorPos, newCursorPos);
-          }, 0);
-        };
-        
-        textarea.addEventListener('paste', handlePaste);
+    const preventPasteDuplication = () => {
+      if (!show) return;
+      
+      // Handle title input paste
+      if (titleInputRef.current) {
+        titleInputRef.current.addEventListener('paste', handlePaste);
+      }
+      
+      // Handle text content paste
+      if (contentRef.current && noteType === 'text') {
+        contentRef.current.addEventListener('paste', handlePaste);
+      }
+      
+      // Handle checklist inputs paste
+      const handleChecklistPaste = () => {
+        const checklistInputs = document.querySelectorAll('.checklist-input');
+        checklistInputs.forEach(input => {
+          input.addEventListener('paste', handlePaste);
+        });
         
         return () => {
-          textarea.removeEventListener('paste', handlePaste);
+          checklistInputs.forEach(input => {
+            input.removeEventListener('paste', handlePaste);
+          });
         };
+      };
+      
+      if (noteType === 'checklist') {
+        return handleChecklistPaste();
       }
+      
+      return () => {
+        if (titleInputRef.current) {
+          titleInputRef.current.removeEventListener('paste', handlePaste);
+        }
+        if (contentRef.current) {
+          contentRef.current.removeEventListener('paste', handlePaste);
+        }
+      };
     };
     
-    if (noteType === 'text' && show) {
-      const cleanup = fixDuplicatePaste();
-      return cleanup;
+    function handlePaste(e: Event) {
+      const pasteEvent = e as ClipboardEvent;
+      
+      // Prevent duplication by ensuring we only process one paste event
+      if (processingPaste) {
+        pasteEvent.preventDefault();
+        return;
+      }
+      
+      setProcessingPaste(true);
+      setTimeout(() => setProcessingPaste(false), 100);
+      
+      // Let the paste event proceed normally without further interference
     }
-  }, [noteType, show, content, onContentChange]);
+    
+    const cleanup = preventPasteDuplication();
+    return cleanup;
+  }, [noteType, show, processingPaste, content, onContentChange]);
 
   if (!show) return null;
 
@@ -215,11 +238,13 @@ const NoteModal = ({
 
         <div className="flex-1 overflow-y-auto p-4">
           <input
+            ref={titleInputRef}
             type="text"
             placeholder="Title"
             className="w-full text-lg font-medium mb-4 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
+            data-prevent-duplication="true"
           />
 
           {noteType === "text" ? (
@@ -229,6 +254,7 @@ const NoteModal = ({
               className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64 break-words"
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
+              data-prevent-duplication="true"
               style={{ 
                 overflowX: 'hidden', 
                 wordWrap: 'break-word', 
@@ -257,6 +283,7 @@ const NoteModal = ({
                     onKeyDown={(e) => onChecklistKeyDown(e, index)}
                     placeholder="List item..."
                     className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
+                    data-prevent-duplication="true"
                     style={{ 
                       textOverflow: 'ellipsis',
                       WebkitAppearance: 'none'

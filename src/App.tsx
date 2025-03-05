@@ -26,12 +26,22 @@ const App = () => {
   });
 
   useEffect(() => {
+    // Add viewport meta tag for better handling across different devices
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content';
+    document.getElementsByTagName('head')[0].appendChild(meta);
+    
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Clean up meta tag if needed
+      document.getElementsByTagName('head')[0].removeChild(meta);
+    };
   }, []);
 
   if (isLoading) {

@@ -66,6 +66,41 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
     };
   }, [navigate, isHomePage, onBackClick]);
 
+  // Handle keyboard visibility and navigation bar height
+  useEffect(() => {
+    const handleResize = () => {
+      // Force relayout to handle keyboard visibility changes
+      document.documentElement.style.height = '100%';
+      setTimeout(() => {
+        document.documentElement.style.height = '';
+      }, 0);
+    };
+
+    // Handle Android navigation gesture area
+    const setNavigationBarPadding = () => {
+      // Detect if device has navigation gesture area at bottom (common in Android 10+)
+      const hasGestureBar = window.innerHeight < window.outerHeight || 
+                            (window.visualViewport && window.visualViewport.height < window.innerHeight);
+      
+      if (hasGestureBar) {
+        document.body.classList.add('has-gesture-bar');
+      } else {
+        document.body.classList.remove('has-gesture-bar');
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', setNavigationBarPadding);
+    
+    // Initial setup
+    setNavigationBarPadding();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', setNavigationBarPadding);
+    };
+  }, []);
+
   const handleBackButtonClick = () => {
     if (onBackClick) {
       onBackClick();

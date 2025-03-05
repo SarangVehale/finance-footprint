@@ -62,6 +62,14 @@
   
   body {
     @apply bg-background text-foreground antialiased;
+    height: 100%;
+    position: relative;
+    overscroll-behavior-y: none;
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden;
   }
 
   ::-webkit-scrollbar {
@@ -137,6 +145,15 @@
   
   body.keyboard-open .fixed {
     position: absolute;
+  }
+
+  /* Android gesture bar handling */
+  body.has-gesture-bar nav.fixed {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+
+  body.has-gesture-bar .pb-safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
   }
 
   /* Prevent content from being hidden under keyboard */
@@ -306,6 +323,12 @@
   /* Adjust positioning for navigation bars */
   .bottom-safe {
     bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+
+  /* Prevent duplication on copy-paste */
+  textarea, input {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
