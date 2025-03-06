@@ -7,16 +7,22 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import History from "./pages/History";
-import Analytics from "./pages/Analytics";
+import Analytics from "./pages/analytics/Analytics";
 import Settings from "./pages/Settings";
 import Notes from "./pages/Notes";
 import NotFound from "./pages/NotFound";
 import Loading from "./pages/Loading";
 import Welcome from "./pages/Welcome";
-import TutorialPage from "./pages/Tutorials";
-import VideoTutorialPage from "./pages/VideoTutorial";
+import TutorialPage from "./pages/tutorials/TutorialPage";
+import VideoTutorialPage from "./pages/video-tutorials/VideoTutorialPage";
 import { useEffect, useState } from "react";
 
+/**
+ * Main App Component
+ * 
+ * Sets up routing, providers, and initial loading state.
+ * Controls the welcome screen flow for first-time users.
+ */
 const queryClient = new QueryClient();
 
 const App = () => {

@@ -1,6 +1,8 @@
 
 import React, { useEffect, useRef } from 'react';
-import { X, FileText, CheckSquare, Plus, ArrowLeft } from 'lucide-react';
+import ModalHeader from './modal/ModalHeader';
+import TextNoteContent from './modal/TextNoteContent';
+import ChecklistNoteContent from './modal/ChecklistNoteContent';
 
 interface NoteModalProps {
   show: boolean;
@@ -21,6 +23,11 @@ interface NoteModalProps {
   modalRef: React.RefObject<HTMLDivElement>;
 }
 
+/**
+ * NoteModal - Modal component for creating and editing notes
+ * 
+ * Handles both text notes and checklist notes with shared functionality.
+ */
 const NoteModal = ({
   show,
   onClose,
@@ -119,7 +126,7 @@ const NoteModal = ({
     };
   }, [show, noteType, modalRef]);
 
-  // Fix for copy-paste duplication in mobile - completely rewritten to fix the issue
+  // Fix for copy-paste duplication in mobile
   useEffect(() => {
     const preventPasteDuplication = () => {
       if (!show) return;
@@ -179,7 +186,7 @@ const NoteModal = ({
     
     const cleanup = preventPasteDuplication();
     return cleanup;
-  }, [noteType, show, processingPaste, content, onContentChange]);
+  }, [noteType, show, processingPaste]);
 
   if (!show) return null;
 
@@ -189,52 +196,12 @@ const NoteModal = ({
         ref={modalContentRef}
         className="bg-card w-full h-[calc(100%-env(safe-area-inset-top))] sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col pt-safe-top pb-safe-bottom"
       >
-        <div className="flex justify-between items-center p-4 border-b border-border">
-          {isMobile ? (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-accent rounded-xl transition-colors text-foreground"
-              aria-label="Close"
-            >
-              <ArrowLeft size={20} />
-            </button>
-          ) : null}
-          
-          <div className="flex space-x-4 mx-auto sm:mx-0">
-            <button
-              onClick={() => onTypeChange("text")}
-              className={`p-2 rounded-xl transition-colors ${
-                noteType === "text"
-                  ? "bg-primary/10 text-primary"
-                  : "hover:bg-accent text-foreground"
-              }`}
-              aria-label="Text note"
-            >
-              <FileText size={20} />
-            </button>
-            <button
-              onClick={() => onTypeChange("checklist")}
-              className={`p-2 rounded-xl transition-colors ${
-                noteType === "checklist"
-                  ? "bg-primary/10 text-primary"
-                  : "hover:bg-accent text-foreground"
-              }`}
-              aria-label="Checklist note"
-            >
-              <CheckSquare size={20} />
-            </button>
-          </div>
-          
-          {!isMobile && (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-accent rounded-xl transition-colors text-foreground"
-              aria-label="Close"
-            >
-              <X size={20} />
-            </button>
-          )}
-        </div>
+        <ModalHeader 
+          noteType={noteType}
+          onTypeChange={onTypeChange}
+          onClose={onClose}
+          isMobile={isMobile}
+        />
 
         <div className="flex-1 overflow-y-auto p-4">
           <input
@@ -248,57 +215,20 @@ const NoteModal = ({
           />
 
           {noteType === "text" ? (
-            <textarea
-              ref={contentRef}
-              placeholder="Start typing..."
-              className="w-full bg-transparent border-none focus:outline-none resize-none text-foreground placeholder:text-muted-foreground h-64 break-words"
-              value={content}
-              onChange={(e) => onContentChange(e.target.value)}
-              data-prevent-duplication="true"
-              style={{ 
-                overflowX: 'hidden', 
-                wordWrap: 'break-word', 
-                width: '100%',
-                WebkitAppearance: 'none',
-                WebkitTapHighlightColor: 'transparent'
-              }}
+            <TextNoteContent 
+              content={content}
+              onContentChange={onContentChange}
+              contentRef={contentRef}
             />
           ) : (
-            <div 
-              ref={checklistContainerRef} 
-              className="space-y-2 overflow-y-auto pb-20"
-            >
-              {checklist.map((item, index) => (
-                <div key={index} className="flex items-center space-x-2 animate-slide-in">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => onChecklistItemToggle(index)}
-                    className="rounded-lg border-input w-5 h-5"
-                  />
-                  <input
-                    type="text"
-                    value={item.text}
-                    onChange={(e) => onChecklistItemChange(index, e.target.value)}
-                    onKeyDown={(e) => onChecklistKeyDown(e, index)}
-                    placeholder="List item..."
-                    className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
-                    data-prevent-duplication="true"
-                    style={{ 
-                      textOverflow: 'ellipsis',
-                      WebkitAppearance: 'none'
-                    }}
-                  />
-                </div>
-              ))}
-              <button
-                onClick={onChecklistItemAdd}
-                className="w-full p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-colors flex items-center justify-center space-x-2"
-              >
-                <Plus size={16} />
-                <span>Add item</span>
-              </button>
-            </div>
+            <ChecklistNoteContent 
+              checklist={checklist}
+              onChecklistItemAdd={onChecklistItemAdd}
+              onChecklistItemChange={onChecklistItemChange}
+              onChecklistItemToggle={onChecklistItemToggle}
+              onChecklistKeyDown={onChecklistKeyDown}
+              checklistContainerRef={checklistContainerRef}
+            />
           )}
         </div>
 
