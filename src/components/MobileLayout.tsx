@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, PieChart, Clock, Settings, FileText, ArrowLeft } from "lucide-react";
 
@@ -21,6 +21,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === "/" || location.pathname === "/home";
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
   // Handle hardware back button for Android
   useEffect(() => {
@@ -40,15 +41,12 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         backButtonPressCount++;
         
         if (backButtonPressCount === 1) {
-          // Show "Press again to exit" toast or notification
-          // This would be implemented in a real mobile app
           console.log("Press back again to exit the application");
           
           backButtonTimer = setTimeout(() => {
             backButtonPressCount = 0;
           }, 2000);
         } else if (backButtonPressCount >= 2) {
-          // In a real app, this would exit the application
           console.log("Exiting application");
           backButtonPressCount = 0;
           clearTimeout(backButtonTimer);
@@ -68,12 +66,28 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
 
   // Handle keyboard visibility and navigation bar height
   useEffect(() => {
-    const handleResize = () => {
-      // Force relayout to handle keyboard visibility changes
-      document.documentElement.style.height = '100%';
-      setTimeout(() => {
-        document.documentElement.style.height = '';
-      }, 0);
+    const handleVisualViewportResize = () => {
+      if (!window.visualViewport) return;
+      
+      // Calculate if keyboard is likely visible based on visual viewport height vs window inner height
+      const keyboardHeight = window.innerHeight - window.visualViewport.height;
+      const keyboardThreshold = 150; // Minimum height difference to consider keyboard as visible
+      
+      if (keyboardHeight > keyboardThreshold) {
+        setIsKeyboardVisible(true);
+        document.body.classList.add('keyboard-open');
+        
+        // Scroll active element into view
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+          setTimeout(() => {
+            activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      } else {
+        setIsKeyboardVisible(false);
+        document.body.classList.remove('keyboard-open');
+      }
     };
 
     // Handle Android navigation gesture area
@@ -89,14 +103,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('resize', handleVisualViewportResize);
     window.addEventListener('resize', setNavigationBarPadding);
     
     // Initial setup
     setNavigationBarPadding();
+    handleVisualViewportResize();
     
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('resize', handleVisualViewportResize);
       window.removeEventListener('resize', setNavigationBarPadding);
     };
   }, []);
@@ -132,16 +147,18 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           </div>
         </header>
       )}
-      <main className="flex-1 overflow-y-auto custom-scrollbar pb-[calc(4rem+env(safe-area-inset-bottom))]">
+      <main className={`flex-1 overflow-y-auto custom-scrollbar ${isKeyboardVisible ? "pb-0" : "pb-[calc(4rem+env(safe-area-inset-bottom))]"}`}>
         <div className="animate-fade-in">{children}</div>
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm">
-        <NavLink to="/home" icon={<Home className="w-5 h-5 sm:w-6 sm:h-6" />} label="Home" />
-        <NavLink to="/analytics" icon={<PieChart className="w-5 h-5 sm:w-6 sm:h-6" />} label="Analytics" />
-        <NavLink to="/history" icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />} label="History" />
-        <NavLink to="/notes" icon={<FileText className="w-5 h-5 sm:w-6 sm:h-6" />} label="Notes" />
-        <NavLink to="/settings" icon={<Settings className="w-5 h-5 sm:w-6 sm:h-6" />} label="Settings" />
-      </nav>
+      {!isKeyboardVisible && (
+        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm">
+          <NavLink to="/home" icon={<Home className="w-5 h-5 sm:w-6 sm:h-6" />} label="Home" />
+          <NavLink to="/analytics" icon={<PieChart className="w-5 h-5 sm:w-6 sm:h-6" />} label="Analytics" />
+          <NavLink to="/history" icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />} label="History" />
+          <NavLink to="/notes" icon={<FileText className="w-5 h-5 sm:w-6 sm:h-6" />} label="Notes" />
+          <NavLink to="/settings" icon={<Settings className="w-5 h-5 sm:w-6 sm:h-6" />} label="Settings" />
+        </nav>
+      )}
     </div>
   );
 };

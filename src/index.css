@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -147,6 +148,23 @@
     position: absolute;
   }
 
+  /* Make content visible above keyboard */
+  body.keyboard-open .modal-body {
+    padding-bottom: 30vh; /* Add extra padding at bottom to ensure content is accessible */
+  }
+  
+  body.keyboard-open input:focus,
+  body.keyboard-open textarea:focus {
+    position: relative;
+    z-index: 10; /* Ensure focused inputs are visible */
+  }
+
+  /* Ensure modal content is visible with keyboard */
+  body.keyboard-open .bg-white, 
+  body.keyboard-open .dark\:bg-gray-800 {
+    padding-bottom: 2rem;
+  }
+
   /* Android gesture bar handling */
   body.has-gesture-bar nav.fixed {
     padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
@@ -162,6 +180,31 @@
       font-size: 16px; /* Prevents iOS zoom */
       position: relative;
       z-index: 2;
+    }
+
+    /* Make transaction modal scroll when keyboard is open */
+    body.keyboard-open .modal-body,
+    body.keyboard-open .animate-slide-up {
+      max-height: 60vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure bottom padding when keyboard is visible */
+    body.keyboard-open .space-y-4.mb-20 {
+      margin-bottom: 0;
+      padding-bottom: 30vh; /* Ensure content scrolls above keyboard */
+    }
+
+    /* Fix for transaction modal to be visible above keyboard */
+    body.keyboard-open .fixed.inset-0.bg-black\/50.backdrop-blur-sm.z-50 {
+      position: fixed !important;
+      bottom: 0 !important;
+    }
+
+    body.keyboard-open .bg-white.dark\:bg-gray-800.w-full.max-w-lg.rounded-t-2xl.sm\:rounded-2xl.p-6.animate-slide-up {
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .checklist-input:focus {
