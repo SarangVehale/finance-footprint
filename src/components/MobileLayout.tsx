@@ -68,19 +68,39 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
 
   // Handle keyboard visibility and navigation bar height
   useEffect(() => {
-    const handleResize = () => {
-      // Force relayout to handle keyboard visibility changes
-      document.documentElement.style.height = '100%';
-      setTimeout(() => {
-        document.documentElement.style.height = '';
-      }, 0);
+    // Track if keyboard is visible
+    let keyboardVisible = false;
+    
+    const handleKeyboardVisibility = () => {
+      // Check for visual viewport changes
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
+        
+        // If visual viewport is significantly smaller than window height, keyboard is likely visible
+        const newKeyboardVisible = viewportHeight < windowHeight * 0.75;
+        
+        if (newKeyboardVisible !== keyboardVisible) {
+          keyboardVisible = newKeyboardVisible;
+          
+          // Add/remove class to body to adjust layout
+          if (keyboardVisible) {
+            document.body.classList.add('keyboard-open');
+            // Add extra padding to bottom of content to ensure visibility
+            document.querySelector('main')?.classList.add('pb-keyboard');
+          } else {
+            document.body.classList.remove('keyboard-open');
+            document.querySelector('main')?.classList.remove('pb-keyboard');
+          }
+        }
+      }
     };
-
-    // Handle Android navigation gesture area
+    
+    // Detect if device has navigation gesture area at bottom (common in Android 10+)
     const setNavigationBarPadding = () => {
-      // Detect if device has navigation gesture area at bottom (common in Android 10+)
-      const hasGestureBar = window.innerHeight < window.outerHeight || 
-                            (window.visualViewport && window.visualViewport.height < window.innerHeight);
+      const hasGestureBar = 
+        window.innerHeight < window.outerHeight || 
+        (window.visualViewport && window.visualViewport.height < window.innerHeight);
       
       if (hasGestureBar) {
         document.body.classList.add('has-gesture-bar');
@@ -89,15 +109,34 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleKeyboardVisibility);
     window.addEventListener('resize', setNavigationBarPadding);
+    window.visualViewport?.addEventListener('resize', handleKeyboardVisibility);
     
     // Initial setup
     setNavigationBarPadding();
+    handleKeyboardVisibility();
+    
+    // Add global CSS for keyboard handling
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .keyboard-open .modal-content {
+        transform: translateY(-30%);
+      }
+      .pb-keyboard {
+        padding-bottom: 40vh !important;
+      }
+      .has-gesture-bar .bottom-bar {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+      }
+    `;
+    document.head.appendChild(style);
     
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleKeyboardVisibility);
       window.removeEventListener('resize', setNavigationBarPadding);
+      window.visualViewport?.removeEventListener('resize', handleKeyboardVisibility);
+      document.head.removeChild(style);
     };
   }, []);
 
@@ -135,7 +174,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       <main className="flex-1 overflow-y-auto custom-scrollbar pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm">
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm bottom-bar">
         <NavLink to="/home" icon={<Home className="w-5 h-5 sm:w-6 sm:h-6" />} label="Home" />
         <NavLink to="/analytics" icon={<PieChart className="w-5 h-5 sm:w-6 sm:h-6" />} label="Analytics" />
         <NavLink to="/history" icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />} label="History" />
