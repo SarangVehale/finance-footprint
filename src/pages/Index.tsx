@@ -129,153 +129,6 @@ const Index = () => {
     });
   };
 
-  // Function to render a custom number pad for the modal
-  const renderNumberPad = () => {
-    // Only render number pad for mobile devices
-    if (window.innerWidth >= 640) return null;
-    
-    const handleNumberClick = (value: string) => {
-      // Handle backspace
-      if (value === 'backspace') {
-        setAmount(prev => prev.slice(0, -1));
-        return;
-      }
-      
-      // Handle enter/done
-      if (value === 'enter') {
-        handleAddOrUpdateTransaction();
-        return;
-      }
-      
-      // Don't allow multiple decimals
-      if (value === '.' && amount.includes('.')) return;
-      
-      setAmount(prev => prev + value);
-    };
-    
-    return (
-      <div className="w-full mt-4">
-        <div className="grid grid-cols-4 gap-2">
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('1')}
-          >
-            1
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('2')}
-          >
-            2
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('3')}
-          >
-            3
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-xl font-medium"
-            onClick={() => handleNumberClick('-')}
-          >
-            −
-          </button>
-          
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('4')}
-          >
-            4
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('5')}
-          >
-            5
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('6')}
-          >
-            6
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-xl font-medium"
-            onClick={() => handleNumberClick('+')}
-          >
-            +
-          </button>
-          
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('7')}
-          >
-            7
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('8')}
-          >
-            8
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('9')}
-          >
-            9
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-blue-600 text-white flex items-center justify-center"
-            onClick={() => handleNumberClick('backspace')}
-          >
-            <X size={24} />
-          </button>
-          
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick(',')}
-          >
-            ,
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('0')}
-          >
-            0
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
-            onClick={() => handleNumberClick('.')}
-          >
-            .
-          </button>
-          <button 
-            type="button" 
-            className="py-3 rounded-full bg-blue-500 text-white flex items-center justify-center"
-            onClick={() => handleNumberClick('enter')}
-          >
-            →|
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <MobileLayout>
       <div className="p-6 space-y-6 dark:bg-gray-900">
@@ -418,7 +271,7 @@ const Index = () => {
                   </label>
                   <input
                     ref={amountInputRef}
-                    type="text"
+                    type="number"
                     inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
@@ -462,21 +315,16 @@ const Index = () => {
                   />
                 </div>
 
-                {window.innerWidth >= 640 && (
-                  <button
-                    onClick={handleAddOrUpdateTransaction}
-                    className={`w-full py-3 rounded-lg text-white font-medium transition-all duration-300 ${
-                      modalType === "income"
-                        ? "bg-mint-500 hover:bg-mint-600"
-                        : "bg-red-500 hover:bg-red-600"
-                    }`}
-                  >
-                    {editingTransaction ? "Update" : "Add"} {modalType === "income" ? "Income" : "Expense"}
-                  </button>
-                )}
-                
-                {/* Custom number pad for mobile */}
-                {renderNumberPad()}
+                <button
+                  onClick={handleAddOrUpdateTransaction}
+                  className={`w-full py-3 rounded-lg text-white font-medium transition-all duration-300 ${
+                    modalType === "income"
+                      ? "bg-mint-500 hover:bg-mint-600"
+                      : "bg-red-500 hover:bg-red-600"
+                  }`}
+                >
+                  {editingTransaction ? "Update" : "Add"} {modalType === "income" ? "Income" : "Expense"}
+                </button>
               </div>
             </div>
           </div>
