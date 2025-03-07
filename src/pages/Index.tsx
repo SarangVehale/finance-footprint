@@ -1,5 +1,4 @@
-
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -26,25 +25,11 @@ const Index = () => {
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
   const currency = storageService.getCurrency();
-  const modalRef = useRef<HTMLDivElement>(null);
-  const amountInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     const loadedTransactions = storageService.getTransactions();
     setTransactions(loadedTransactions);
   }, []);
-
-  // Handle scroll into view when modal opens
-  useEffect(() => {
-    if (showModal && modalRef.current) {
-      setTimeout(() => {
-        if (amountInputRef.current) {
-          // Focus on amount input with a delay to avoid keyboard layout shifts
-          amountInputRef.current.focus();
-        }
-      }, 300);
-    }
-  }, [showModal]);
 
   const getCurrencySymbol = (currency: string) => {
     const symbols: { [key: string]: string } = {
@@ -180,78 +165,64 @@ const Index = () => {
 
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Recent Transactions</h2>
-          <div className="space-y-4 mb-28"> {/* Increased bottom margin to ensure content isn't cut off by keyboard */}
-            {transactions.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl text-center">
-                <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
-              </div>
-            ) : (
-              transactions.slice(0, 5).map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+          <div className="space-y-4">
+            {transactions.slice(0, 5).map((transaction) => (
+              <div
+                key={transaction.id}
+                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="flex items-center space-x-4">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      transaction.type === "income"
+                        ? "bg-green-100 text-green-500"
+                        : "bg-red-100 text-red-500"
+                    }`}
+                  >
+                    <DollarSign size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium dark:text-white">{transaction.category}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {format(new Date(transaction.date), "MMM d, yyyy")}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end space-y-2">
+                    <p
+                      className={`font-semibold ${
                         transaction.type === "income"
-                          ? "bg-green-100 text-green-500"
-                          : "bg-red-100 text-red-500"
+                          ? "text-green-500"
+                          : "text-red-500"
                       }`}
                     >
-                      <DollarSign size={20} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium dark:text-white">{transaction.category}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {format(new Date(transaction.date), "MMM d, yyyy")}
-                      </p>
-                      {transaction.description && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {transaction.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex flex-col items-end space-y-2">
-                      <p
-                        className={`font-semibold ${
-                          transaction.type === "income"
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }`}
+                      {transaction.type === "income" ? "+" : "-"}
+                      {getCurrencySymbol(currency)}
+                      {transaction.amount.toFixed(2)}
+                    </p>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleOpenModal(transaction.type, transaction)}
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                       >
-                        {transaction.type === "income" ? "+" : "-"}
-                        {getCurrencySymbol(currency)}
-                        {transaction.amount.toFixed(2)}
-                      </p>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleOpenModal(transaction.type, transaction)}
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                        >
-                          <Pencil size={16} className="text-gray-500" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTransaction(transaction.id)}
-                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                        >
-                          <Trash2 size={16} className="text-red-500" />
-                        </button>
-                      </div>
+                        <Pencil size={16} className="text-gray-500" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTransaction(transaction.id)}
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                      >
+                        <Trash2 size={16} className="text-red-500" />
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
         </div>
 
         {showModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
-            <div 
-              ref={modalRef}
-              className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up"
-            >
+            <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 animate-slide-up">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold dark:text-white">
                   {editingTransaction ? "Edit" : "Add"} {modalType === "income" ? "Income" : "Expense"}
@@ -264,18 +235,16 @@ const Index = () => {
                 </button>
               </div>
 
-              <div className="space-y-4 modal-body">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Amount
                   </label>
                   <input
-                    ref={amountInputRef}
                     type="number"
-                    inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all text-center text-xl font-semibold"
+                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
                     placeholder="Enter amount"
                   />
                 </div>
