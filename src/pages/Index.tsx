@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   DollarSign,
@@ -114,6 +115,153 @@ const Index = () => {
     });
   };
 
+  // Function to render a custom number pad for the modal
+  const renderNumberPad = () => {
+    // Only render number pad for mobile devices
+    if (window.innerWidth >= 640) return null;
+    
+    const handleNumberClick = (value: string) => {
+      // Handle backspace
+      if (value === 'backspace') {
+        setAmount(prev => prev.slice(0, -1));
+        return;
+      }
+      
+      // Handle enter/done
+      if (value === 'enter') {
+        handleAddOrUpdateTransaction();
+        return;
+      }
+      
+      // Don't allow multiple decimals
+      if (value === '.' && amount.includes('.')) return;
+      
+      setAmount(prev => prev + value);
+    };
+    
+    return (
+      <div className="w-full mt-4">
+        <div className="grid grid-cols-4 gap-2">
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('1')}
+          >
+            1
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('2')}
+          >
+            2
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('3')}
+          >
+            3
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-xl font-medium"
+            onClick={() => handleNumberClick('-')}
+          >
+            −
+          </button>
+          
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('4')}
+          >
+            4
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('5')}
+          >
+            5
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('6')}
+          >
+            6
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-xl font-medium"
+            onClick={() => handleNumberClick('+')}
+          >
+            +
+          </button>
+          
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('7')}
+          >
+            7
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('8')}
+          >
+            8
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('9')}
+          >
+            9
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-blue-600 text-white flex items-center justify-center"
+            onClick={() => handleNumberClick('backspace')}
+          >
+            <X size={24} />
+          </button>
+          
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick(',')}
+          >
+            ,
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('0')}
+          >
+            0
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-gray-700 text-white text-2xl font-medium"
+            onClick={() => handleNumberClick('.')}
+          >
+            .
+          </button>
+          <button 
+            type="button" 
+            className="py-3 rounded-full bg-blue-500 text-white flex items-center justify-center"
+            onClick={() => handleNumberClick('enter')}
+          >
+            →|
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <MobileLayout>
       <div className="p-6 space-y-6 dark:bg-gray-900">
@@ -165,58 +313,69 @@ const Index = () => {
 
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Recent Transactions</h2>
-          <div className="space-y-4">
-            {transactions.slice(0, 5).map((transaction) => (
-              <div
-                key={transaction.id}
-                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <div className="flex items-center space-x-4">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.type === "income"
-                        ? "bg-green-100 text-green-500"
-                        : "bg-red-100 text-red-500"
-                    }`}
-                  >
-                    <DollarSign size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium dark:text-white">{transaction.category}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {format(new Date(transaction.date), "MMM d, yyyy")}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end space-y-2">
-                    <p
-                      className={`font-semibold ${
+          <div className="space-y-4 mb-20"> {/* Added extra bottom margin to ensure content isn't cut off */}
+            {transactions.length === 0 ? (
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl text-center">
+                <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
+              </div>
+            ) : (
+              transactions.slice(0, 5).map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         transaction.type === "income"
-                          ? "text-green-500"
-                          : "text-red-500"
+                          ? "bg-green-100 text-green-500"
+                          : "bg-red-100 text-red-500"
                       }`}
                     >
-                      {transaction.type === "income" ? "+" : "-"}
-                      {getCurrencySymbol(currency)}
-                      {transaction.amount.toFixed(2)}
-                    </p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleOpenModal(transaction.type, transaction)}
-                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                      <DollarSign size={20} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium dark:text-white">{transaction.category}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {format(new Date(transaction.date), "MMM d, yyyy")}
+                      </p>
+                      {transaction.description && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          {transaction.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <p
+                        className={`font-semibold ${
+                          transaction.type === "income"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
                       >
-                        <Pencil size={16} className="text-gray-500" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTransaction(transaction.id)}
-                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                      >
-                        <Trash2 size={16} className="text-red-500" />
-                      </button>
+                        {transaction.type === "income" ? "+" : "-"}
+                        {getCurrencySymbol(currency)}
+                        {transaction.amount.toFixed(2)}
+                      </p>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleOpenModal(transaction.type, transaction)}
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        >
+                          <Pencil size={16} className="text-gray-500" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        >
+                          <Trash2 size={16} className="text-red-500" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -241,10 +400,11 @@ const Index = () => {
                     Amount
                   </label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
+                    className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all text-center text-xl font-semibold"
                     placeholder="Enter amount"
                   />
                 </div>
@@ -284,16 +444,21 @@ const Index = () => {
                   />
                 </div>
 
-                <button
-                  onClick={handleAddOrUpdateTransaction}
-                  className={`w-full py-3 rounded-lg text-white font-medium transition-all duration-300 ${
-                    modalType === "income"
-                      ? "bg-mint-500 hover:bg-mint-600"
-                      : "bg-red-500 hover:bg-red-600"
-                  }`}
-                >
-                  {editingTransaction ? "Update" : "Add"} {modalType === "income" ? "Income" : "Expense"}
-                </button>
+                {window.innerWidth >= 640 && (
+                  <button
+                    onClick={handleAddOrUpdateTransaction}
+                    className={`w-full py-3 rounded-lg text-white font-medium transition-all duration-300 ${
+                      modalType === "income"
+                        ? "bg-mint-500 hover:bg-mint-600"
+                        : "bg-red-500 hover:bg-red-600"
+                    }`}
+                  >
+                    {editingTransaction ? "Update" : "Add"} {modalType === "income" ? "Income" : "Expense"}
+                  </button>
+                )}
+                
+                {/* Custom number pad for mobile */}
+                {renderNumberPad()}
               </div>
             </div>
           </div>
