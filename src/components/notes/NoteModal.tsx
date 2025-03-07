@@ -59,6 +59,8 @@ const NoteModal = ({
       if (modalContentRef.current && 
           !modalContentRef.current.contains(event.target as Node) && 
           show) {
+        // Save before closing
+        onSave();
         onClose();
       }
     };
@@ -68,7 +70,7 @@ const NoteModal = ({
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [show, onClose]);
+  }, [show, onClose, onSave]);
 
   // Fix keyboard and view issues
   useEffect(() => {
@@ -98,6 +100,12 @@ const NoteModal = ({
     const handleResize = () => {
       const viewportHeight = window.innerHeight;
       const windowHeight = window.outerHeight;
+      
+      console.log("Note modal resize", {
+        viewportHeight,
+        windowHeight,
+        noteType
+      });
       
       if (windowHeight > viewportHeight * 1.2) {
         // Keyboard is likely open
@@ -188,6 +196,18 @@ const NoteModal = ({
     return cleanup;
   }, [noteType, show, processingPaste]);
 
+  // Auto-save effect
+  useEffect(() => {
+    if (show && (title || content || checklist.some(item => item.text))) {
+      const saveTimer = setInterval(() => {
+        console.log("Auto-saving note data");
+        onSave();
+      }, 5000);
+      
+      return () => clearInterval(saveTimer);
+    }
+  }, [show, title, content, checklist, onSave]);
+
   if (!show) return null;
 
   return (
@@ -199,7 +219,10 @@ const NoteModal = ({
         <ModalHeader 
           noteType={noteType}
           onTypeChange={onTypeChange}
-          onClose={onClose}
+          onClose={() => {
+            onSave();
+            onClose();
+          }}
           isMobile={isMobile}
         />
 

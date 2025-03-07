@@ -47,12 +47,19 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
             value={item.text}
             onChange={(e) => onChecklistItemChange(index, e.target.value)}
             onKeyDown={(e) => onChecklistKeyDown(e, index)}
+            onBlur={() => {
+              // Ensure data is saved when user tabs out or moves focus
+              if (item.text.trim() === '') {
+                onChecklistItemChange(index, 'New item');
+              }
+            }}
             placeholder="List item..."
             className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground checklist-input"
             data-prevent-duplication="true"
             style={{ 
               textOverflow: 'ellipsis',
-              WebkitAppearance: 'none'
+              WebkitAppearance: 'none',
+              appearance: 'none'
             }}
           />
         </div>

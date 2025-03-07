@@ -80,6 +80,13 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         // If visual viewport is significantly smaller than window height, keyboard is likely visible
         const newKeyboardVisible = viewportHeight < windowHeight * 0.75;
         
+        console.log("Keyboard visibility check", {
+          viewportHeight,
+          windowHeight,
+          newKeyboardVisible,
+          currentKeyboardVisible: keyboardVisible
+        });
+        
         if (newKeyboardVisible !== keyboardVisible) {
           keyboardVisible = newKeyboardVisible;
           
@@ -124,10 +131,23 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         transform: translateY(-30%);
       }
       .pb-keyboard {
-        padding-bottom: 40vh !important;
+        padding-bottom: 50vh !important;
       }
       .has-gesture-bar .bottom-bar {
         padding-bottom: env(safe-area-inset-bottom, 20px);
+      }
+      .keyboard-open .fixed-bottom, 
+      .keyboard-open .fixed.bottom-0 {
+        transform: translateY(-100%);
+        visibility: hidden;
+      }
+      .keyboard-open [role="dialog"] {
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+      .keyboard-open .fixed.inset-0 {
+        height: auto;
+        bottom: auto;
       }
     `;
     document.head.appendChild(style);

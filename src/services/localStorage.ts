@@ -77,25 +77,45 @@ export const storageService = {
   },
 
   saveTransaction: (transaction: Transaction): boolean => {
-    const transactions = storageService.getTransactions();
-    transactions.push(transaction);
-    return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+    try {
+      const transactions = storageService.getTransactions();
+      const newTransactions = [...transactions, transaction];
+      console.log("Saving transaction:", transaction);
+      console.log("All transactions:", newTransactions);
+      return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(newTransactions));
+    } catch (error) {
+      console.error("Error saving transaction:", error);
+      return false;
+    }
   },
 
   updateTransaction: (transaction: Transaction): boolean => {
-    const transactions = storageService.getTransactions();
-    const index = transactions.findIndex((t) => t.id === transaction.id);
-    if (index !== -1) {
-      transactions[index] = transaction;
-      return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+    try {
+      const transactions = storageService.getTransactions();
+      const index = transactions.findIndex((t) => t.id === transaction.id);
+      if (index !== -1) {
+        const updatedTransactions = [...transactions];
+        updatedTransactions[index] = transaction;
+        console.log("Updating transaction:", transaction);
+        return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(updatedTransactions));
+      }
+      return false;
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+      return false;
     }
-    return false;
   },
 
   deleteTransaction: (id: string): boolean => {
-    const transactions = storageService.getTransactions();
-    const filtered = transactions.filter((t) => t.id !== id);
-    return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(filtered));
+    try {
+      const transactions = storageService.getTransactions();
+      const filtered = transactions.filter((t) => t.id !== id);
+      console.log("Deleting transaction:", id);
+      return safeStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(filtered));
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+      return false;
+    }
   },
 
   // Budgets
@@ -112,26 +132,39 @@ export const storageService = {
   },
 
   saveBudget: (budget: Budget): boolean => {
-    const budgets = storageService.getBudgets();
-    const existingIndex = budgets.findIndex((b) => b.category === budget.category);
-    
-    if (existingIndex !== -1) {
-      budgets[existingIndex] = budget;
-    } else {
-      budgets.push(budget);
+    try {
+      const budgets = storageService.getBudgets();
+      const existingIndex = budgets.findIndex((b) => b.category === budget.category);
+      
+      const updatedBudgets = [...budgets];
+      if (existingIndex !== -1) {
+        updatedBudgets[existingIndex] = budget;
+      } else {
+        updatedBudgets.push(budget);
+      }
+      
+      return safeStorage.setItem(BUDGETS_KEY, JSON.stringify(updatedBudgets));
+    } catch (error) {
+      console.error("Error saving budget:", error);
+      return false;
     }
-    
-    return safeStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
   },
 
   updateBudgetSpent: (category: string, amount: number): boolean => {
-    const budgets = storageService.getBudgets();
-    const budget = budgets.find((b) => b.category === category);
-    if (budget) {
-      budget.spent += amount;
-      return safeStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+    try {
+      const budgets = storageService.getBudgets();
+      const budget = budgets.find((b) => b.category === category);
+      if (budget) {
+        const updatedBudgets = [...budgets];
+        const index = updatedBudgets.findIndex((b) => b.category === category);
+        updatedBudgets[index] = {...budget, spent: budget.spent + amount};
+        return safeStorage.setItem(BUDGETS_KEY, JSON.stringify(updatedBudgets));
+      }
+      return false;
+    } catch (error) {
+      console.error("Error updating budget spent:", error);
+      return false;
     }
-    return false;
   },
 
   // Notes
@@ -148,25 +181,44 @@ export const storageService = {
   },
 
   saveNote: (note: Note): boolean => {
-    const notes = storageService.getNotes();
-    notes.push(note);
-    return safeStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    try {
+      const notes = storageService.getNotes();
+      const newNotes = [...notes, note];
+      console.log("Saving note:", note);
+      return safeStorage.setItem(NOTES_KEY, JSON.stringify(newNotes));
+    } catch (error) {
+      console.error("Error saving note:", error);
+      return false;
+    }
   },
 
   updateNote: (note: Note): boolean => {
-    const notes = storageService.getNotes();
-    const index = notes.findIndex((n) => n.id === note.id);
-    if (index !== -1) {
-      notes[index] = note;
-      return safeStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    try {
+      const notes = storageService.getNotes();
+      const index = notes.findIndex((n) => n.id === note.id);
+      if (index !== -1) {
+        const updatedNotes = [...notes];
+        updatedNotes[index] = note;
+        console.log("Updating note:", note);
+        return safeStorage.setItem(NOTES_KEY, JSON.stringify(updatedNotes));
+      }
+      return false;
+    } catch (error) {
+      console.error("Error updating note:", error);
+      return false;
     }
-    return false;
   },
 
   deleteNote: (id: string): boolean => {
-    const notes = storageService.getNotes();
-    const filtered = notes.filter((n) => n.id !== id);
-    return safeStorage.setItem(NOTES_KEY, JSON.stringify(filtered));
+    try {
+      const notes = storageService.getNotes();
+      const filtered = notes.filter((n) => n.id !== id);
+      console.log("Deleting note:", id);
+      return safeStorage.setItem(NOTES_KEY, JSON.stringify(filtered));
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      return false;
+    }
   },
 
   // Theme
@@ -175,6 +227,7 @@ export const storageService = {
   },
 
   setTheme: (theme: "light" | "dark" | "system"): boolean => {
+    console.log("Setting theme:", theme);
     return safeStorage.setItem(THEME_KEY, theme);
   },
 
@@ -184,6 +237,19 @@ export const storageService = {
   },
 
   setCurrency: (currency: string): boolean => {
+    console.log("Setting currency:", currency);
     return safeStorage.setItem(CURRENCY_KEY, currency);
   },
+
+  // Debug
+  clearAll: (): void => {
+    try {
+      safeStorage.removeItem(TRANSACTIONS_KEY);
+      safeStorage.removeItem(BUDGETS_KEY);
+      safeStorage.removeItem(NOTES_KEY);
+      console.log("All data cleared from localStorage");
+    } catch (error) {
+      console.error("Error clearing storage:", error);
+    }
+  }
 };
