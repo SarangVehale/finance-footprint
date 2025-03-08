@@ -7,11 +7,54 @@ const BUDGETS_KEY = "finance_budgets";
 const NOTES_KEY = "finance_notes";
 const THEME_KEY = "finance_theme";
 const CURRENCY_KEY = "finance_currency";
+const STORAGE_PERMISSION_ASKED = "storage_permission_asked";
 
 // Helper function to safely interact with localStorage
 const safeStorage = {
+  // Check if storage is available and accessible
+  checkStorageAvailability: (): boolean => {
+    try {
+      const testKey = "storage_test";
+      localStorage.setItem(testKey, "test");
+      const result = localStorage.getItem(testKey);
+      localStorage.removeItem(testKey);
+      return result === "test";
+    } catch (e) {
+      console.error("Storage is not available:", e);
+      return false;
+    }
+  },
+  
+  // Request storage permission explicitly for PWA context
+  requestStoragePermission: async (): Promise<boolean> => {
+    if (safeStorage.checkStorageAvailability()) {
+      return true;
+    }
+    
+    // Set flag to avoid asking multiple times
+    if (localStorage.getItem(STORAGE_PERMISSION_ASKED) === "true") {
+      return false;
+    }
+    
+    try {
+      // We can't actually "request" storage permission directly,
+      // but we can notify the user and attempt a write operation
+      console.log("Attempting to access local storage...");
+      localStorage.setItem(STORAGE_PERMISSION_ASKED, "true");
+      return safeStorage.checkStorageAvailability();
+    } catch (e) {
+      console.error("Failed to get storage permission:", e);
+      return false;
+    }
+  },
+  
   getItem: (key: string): string | null => {
     try {
+      if (!safeStorage.checkStorageAvailability()) {
+        console.error("Storage is not available");
+        return null;
+      }
+      
       return localStorage.getItem(key);
     } catch (error) {
       console.error(`Error reading from localStorage (${key}):`, error);
@@ -21,6 +64,11 @@ const safeStorage = {
   
   setItem: (key: string, value: string): boolean => {
     try {
+      if (!safeStorage.checkStorageAvailability()) {
+        console.error("Storage is not available");
+        return false;
+      }
+      
       localStorage.setItem(key, value);
       return true;
     } catch (error) {
@@ -53,6 +101,11 @@ const safeStorage = {
   
   removeItem: (key: string): boolean => {
     try {
+      if (!safeStorage.checkStorageAvailability()) {
+        console.error("Storage is not available");
+        return false;
+      }
+      
       localStorage.removeItem(key);
       return true;
     } catch (error) {
@@ -62,7 +115,21 @@ const safeStorage = {
   }
 };
 
+// Initialize storage on app load
+(() => {
+  safeStorage.requestStoragePermission().then(available => {
+    if (!available) {
+      console.warn("Storage permission not granted. App functionality will be limited.");
+    }
+  });
+})();
+
 export const storageService = {
+  // Check storage availability - public method for UI to check
+  isStorageAvailable: (): boolean => {
+    return safeStorage.checkStorageAvailability();
+  },
+
   // Transactions
   getTransactions: (): Transaction[] => {
     const stored = safeStorage.getItem(TRANSACTIONS_KEY);

@@ -29,6 +29,26 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
   onChecklistKeyDown,
   checklistContainerRef
 }) => {
+  // Debugging logs
+  React.useEffect(() => {
+    console.log("Checklist rendered with items:", checklist);
+  }, [checklist]);
+
+  const handleAddItemClick = () => {
+    console.log("Add item button clicked");
+    onChecklistItemAdd();
+  };
+
+  const handleToggleCheck = (index: number) => {
+    console.log("Toggle checkbox for item at index:", index);
+    onChecklistItemToggle(index);
+  };
+
+  const handleItemTextChange = (index: number, text: string) => {
+    console.log("Item text changed at index:", index, "New text:", text);
+    onChecklistItemChange(index, text);
+  };
+
   return (
     <div 
       ref={checklistContainerRef} 
@@ -39,18 +59,18 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
           <input
             type="checkbox"
             checked={item.checked}
-            onChange={() => onChecklistItemToggle(index)}
+            onChange={() => handleToggleCheck(index)}
             className="rounded-lg border-input w-5 h-5"
           />
           <input
             type="text"
             value={item.text}
-            onChange={(e) => onChecklistItemChange(index, e.target.value)}
+            onChange={(e) => handleItemTextChange(index, e.target.value)}
             onKeyDown={(e) => onChecklistKeyDown(e, index)}
             onBlur={() => {
               // Ensure data is saved when user tabs out or moves focus
               if (item.text.trim() === '') {
-                onChecklistItemChange(index, 'New item');
+                handleItemTextChange(index, 'New item');
               }
             }}
             placeholder="List item..."
@@ -65,7 +85,7 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
         </div>
       ))}
       <button
-        onClick={onChecklistItemAdd}
+        onClick={handleAddItemClick}
         className="w-full p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-colors flex items-center justify-center space-x-2"
       >
         <Plus size={16} />

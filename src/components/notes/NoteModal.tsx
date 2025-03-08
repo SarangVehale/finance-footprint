@@ -3,6 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import ModalHeader from './modal/ModalHeader';
 import TextNoteContent from './modal/TextNoteContent';
 import ChecklistNoteContent from './modal/ChecklistNoteContent';
+import { useToast } from '@/hooks/use-toast';
+import { storageService } from '@/services/localStorage';
+import { AlertCircle } from 'lucide-react';
 
 interface NoteModalProps {
   show: boolean;
@@ -52,7 +55,59 @@ const NoteModal = ({
   const modalContentRef = useRef<HTMLDivElement>(null);
   const isMobile = window.innerWidth < 640;
   const [processingPaste, setProcessingPaste] = React.useState(false);
+  const [storageAvailable, setStorageAvailable] = React.useState(true);
+  const { toast } = useToast();
 
+  // Check if storage is available
+  useEffect(() => {
+    if (show) {
+      const available = storageService.isStorageAvailable();
+      setStorageAvailable(available);
+      
+      if (!available) {
+        toast({
+          title: "Storage Access Issue",
+          description: "This app needs storage access to save your notes. Some features may not work properly.",
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+    }
+  }, [show, toast]);
+
+  // Debug logs for button interactions
+  useEffect(() => {
+    if (show) {
+      console.log("Note modal opened, type:", noteType);
+      console.log("Current data:", {
+        title,
+        content,
+        checklist: checklist.length > 0 ? `${checklist.length} items` : "empty"
+      });
+    }
+  }, [show, noteType, title, content, checklist]);
+
+  // Log the save operation
+  const handleSave = () => {
+    console.log("Saving note data:", {
+      type: noteType,
+      title,
+      content: noteType === "text" ? content : "checklist",
+      checklist: noteType === "checklist" ? checklist : []
+    });
+    
+    if (!storageAvailable) {
+      toast({
+        title: "Storage Access Required",
+        description: "Cannot save note. Storage access is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    onSave();
+  };
+  
   // Handle outside clicks
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -60,7 +115,7 @@ const NoteModal = ({
           !modalContentRef.current.contains(event.target as Node) && 
           show) {
         // Save before closing
-        onSave();
+        handleSave();
         onClose();
       }
     };
@@ -198,15 +253,15 @@ const NoteModal = ({
 
   // Auto-save effect
   useEffect(() => {
-    if (show && (title || content || checklist.some(item => item.text))) {
+    if (show && storageAvailable && (title || content || checklist.some(item => item.text))) {
       const saveTimer = setInterval(() => {
         console.log("Auto-saving note data");
-        onSave();
+        handleSave();
       }, 5000);
       
       return () => clearInterval(saveTimer);
     }
-  }, [show, title, content, checklist, onSave]);
+  }, [show, title, content, checklist, storageAvailable]);
 
   if (!show) return null;
 
@@ -220,13 +275,22 @@ const NoteModal = ({
           noteType={noteType}
           onTypeChange={onTypeChange}
           onClose={() => {
-            onSave();
+            handleSave();
             onClose();
           }}
           isMobile={isMobile}
         />
 
         <div className="flex-1 overflow-y-auto p-4">
+          {!storageAvailable && (
+            <div className="bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl p-3 flex items-center space-x-2 mb-4">
+              <AlertCircle className="text-red-500" size={16} />
+              <p className="text-xs text-red-700 dark:text-red-300">
+                Storage access is limited. Your note may not be saved.
+              </p>
+            </div>
+          )}
+          
           <input
             ref={titleInputRef}
             type="text"
@@ -257,9 +321,18 @@ const NoteModal = ({
 
         {autoSave && (
           <div className="flex items-center justify-center p-2 border-t border-border mt-auto text-xs text-muted-foreground">
-            Auto-saving...
+            {storageAvailable ? "Auto-saving..." : "Auto-save disabled"}
           </div>
         )}
+
+        <div className="p-4 border-t border-border">
+          <button
+            onClick={handleSave}
+            className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition-colors"
+          >
+            Save Note
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import {
   X,
   Pencil,
   Trash2,
+  AlertCircle
 } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,12 +25,25 @@ const Index = () => {
   const [description, setDescription] = React.useState("");
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
+  const [storageAvailable, setStorageAvailable] = React.useState(true);
   const currency = storageService.getCurrency();
 
   React.useEffect(() => {
     const loadedTransactions = storageService.getTransactions();
     setTransactions(loadedTransactions);
-  }, []);
+    
+    const available = storageService.isStorageAvailable();
+    setStorageAvailable(available);
+    
+    if (!available) {
+      toast({
+        title: "Storage Access Issue",
+        description: "This app needs storage access to save your data. Some features may not work properly.",
+        variant: "destructive",
+        duration: 6000,
+      });
+    }
+  }, [toast]);
 
   const getCurrencySymbol = (currency: string) => {
     const symbols: { [key: string]: string } = {
@@ -53,6 +67,15 @@ const Index = () => {
     .reduce((sum, t) => sum + t.amount, 0);
 
   const handleOpenModal = (type: "income" | "expense", transaction?: Transaction) => {
+    if (!storageAvailable) {
+      toast({
+        title: "Storage Access Required",
+        description: "This app needs storage access to save your data. Please refresh the page and allow storage access.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (transaction) {
       setEditingTransaction(transaction);
       setModalType(transaction.type);
@@ -70,12 +93,29 @@ const Index = () => {
   };
 
   const handleDeleteTransaction = (id: string) => {
-    storageService.deleteTransaction(id);
-    setTransactions(transactions.filter(t => t.id !== id));
-    toast({
-      title: "Success",
-      description: "Transaction deleted successfully",
-    });
+    if (!storageAvailable) {
+      toast({
+        title: "Storage Access Required",
+        description: "Cannot delete transaction. Storage access is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const success = storageService.deleteTransaction(id);
+    if (success) {
+      setTransactions(transactions.filter(t => t.id !== id));
+      toast({
+        title: "Success",
+        description: "Transaction deleted successfully",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to delete transaction. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAddOrUpdateTransaction = () => {
@@ -83,6 +123,15 @@ const Index = () => {
       toast({
         title: "Invalid amount",
         description: "Please enter a valid amount",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!storageAvailable) {
+      toast({
+        title: "Storage Access Required",
+        description: "Cannot save transaction. Storage access is required.",
         variant: "destructive",
       });
       return;
@@ -97,26 +146,50 @@ const Index = () => {
       description,
     };
 
+    console.log("Attempting to save transaction:", transactionData);
+
+    let success = false;
     if (editingTransaction) {
-      storageService.updateTransaction(transactionData);
-      setTransactions(transactions.map(t => 
-        t.id === transactionData.id ? transactionData : t
-      ));
+      success = storageService.updateTransaction(transactionData);
+      if (success) {
+        setTransactions(transactions.map(t => 
+          t.id === transactionData.id ? transactionData : t
+        ));
+      }
     } else {
-      storageService.saveTransaction(transactionData);
-      setTransactions([transactionData, ...transactions]);
+      success = storageService.saveTransaction(transactionData);
+      if (success) {
+        setTransactions([transactionData, ...transactions]);
+      }
     }
 
-    setShowModal(false);
-    toast({
-      title: "Success",
-      description: `Transaction ${editingTransaction ? "updated" : "added"} successfully`,
-    });
+    if (success) {
+      setShowModal(false);
+      toast({
+        title: "Success",
+        description: `Transaction ${editingTransaction ? "updated" : "added"} successfully`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: `Failed to ${editingTransaction ? "update" : "add"} transaction. Please try again.`,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <MobileLayout>
       <div className="p-6 space-y-6 dark:bg-gray-900">
+        {!storageAvailable && (
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl p-4 flex items-center space-x-3 mb-4 animate-pulse">
+            <AlertCircle className="text-red-500" size={20} />
+            <p className="text-sm text-red-700 dark:text-red-300">
+              Storage access is limited. Your data may not be saved.
+            </p>
+          </div>
+        )}
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
           <div className="space-y-1">
             <p className="text-sm text-gray-500 dark:text-gray-400">Total Balance</p>
@@ -242,6 +315,7 @@ const Index = () => {
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-mint-500 focus:border-transparent transition-all"
