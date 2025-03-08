@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import Loading from "./pages/Loading";
 import Welcome from "./pages/Welcome";
 import TutorialPage from "./pages/tutorials/TutorialPage";
 import VideoTutorialPage from "./pages/video-tutorials/VideoTutorialPage";
+import SettingsDocumentation from "./pages/SettingsDocumentation";
 import { useEffect, useState } from "react";
 
 /**
@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
  */
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasSeenWelcome, setHasSeenWelcome] = useState(() => {
     return localStorage.getItem("hasSeenWelcome") === "true";
@@ -72,6 +72,7 @@ const App = () => {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/notes" element={<Notes />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/documentation" element={<SettingsDocumentation />} />
               <Route path="/tutorial/:id" element={<TutorialPage />} />
               <Route path="/video/:id" element={<VideoTutorialPage />} />
               <Route path="*" element={<NotFound />} />
@@ -83,6 +84,6 @@ const App = () => {
       </QueryClientProvider>
     </ThemeProvider>
   );
-};
+}
 
 export default App;

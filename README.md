@@ -129,7 +129,51 @@ npm run build
 npm run preview
 ```
 
-### Deployment
+## Documentation
+
+### System Documentation
+
+Comprehensive documentation is available for understanding the architecture and implementation details of Finance Footprint:
+
+- **[System Architecture](src/docs/Documentation.md)**: Overview of the entire system
+- **[Settings System](src/docs/SettingsSystem.md)**: Documentation for the settings module
+- **[Modal System](src/docs/ModalSystem.md)**: Details about the modal implementation
+- **[Mobile Layout](src/docs/MobileLayout.md)**: Information about the mobile layout components
+- **[Tutorial System](src/docs/TutorialSystem.md)**: Documentation for the tutorial features
+- **[Data Flow](src/docs/DataFlow.md)**: Explanation of application data flow
+- **[File Structure](src/docs/FileStructure.md)**: Project file organization
+
+### In-App Documentation
+
+The application includes built-in documentation accessible through the Settings menu:
+
+1. Navigate to the Settings page
+2. Find the Documentation section
+3. Choose from:
+   - User Guide
+   - FAQs
+   - Tutorials & Guides
+   - Full Documentation
+
+### Troubleshooting
+
+Common issues and their solutions:
+
+#### Storage Access Issues
+- Check browser storage permissions
+- Clear browser cache and refresh
+- Verify localStorage availability
+
+#### UI Display Issues
+- Check device orientation and screen size
+- Verify CSS styles for responsive design
+- Test on different devices or screen sizes
+
+#### Keyboard Overlay Issues
+- The application implements special handling for virtual keyboards
+- If issues persist, check the `visualViewport` listeners in ModalContainer.tsx
+
+## Deployment
 
 #### Web Deployment
 
@@ -179,6 +223,7 @@ src/
 ├── services/      # Business logic and services
 ├── types/         # TypeScript type definitions
 ├── hooks/         # Custom React hooks
+├── docs/          # Documentation files
 └── utils/         # Utility functions
 ```
 
@@ -191,31 +236,6 @@ src/
 - [React Query](https://tanstack.com/query/latest)
 - [Recharts](https://recharts.org/)
 - [Capacitor](https://capacitorjs.com/)
-
-## Troubleshooting
-
-### Android Build Issues
-
-1. Gradle sync fails:
-   - Update Android Studio
-   - Clean and rebuild project
-   - Delete `android/build` folder and sync again
-
-2. APK signing issues:
-   - Verify keystore details
-   - Regenerate keystore if needed
-
-### iOS Build Issues
-
-1. Signing issues:
-   - Verify Apple Developer account
-   - Update provisioning profiles
-   - Check bundle identifier
-
-2. Simulator issues:
-   - Update Xcode
-   - Reset simulator
-   - Clean build folder
 
 ## License
 

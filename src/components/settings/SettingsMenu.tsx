@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   ChevronRight, 
@@ -12,9 +13,11 @@ import {
   GraduationCap,
   Github,
   ExternalLink,
-  FileSpreadsheet
+  FileSpreadsheet,
+  FileText
 } from "lucide-react";
 import { ModalType } from "./ModalContainer";
+import { Link } from "react-router-dom";
 
 interface SettingsMenuProps {
   setActiveModal: (modal: ModalType) => void;
@@ -69,7 +72,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setActiveModal }) => {
 
       <button
         onClick={() => setActiveModal("about")}
-        className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors rounded-b-xl"
+        className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
       >
         <div className="flex items-center space-x-3">
           <Info className="text-muted-foreground" size={18} />
@@ -128,6 +131,17 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setActiveModal }) => {
           </div>
           <ChevronRight size={18} className="text-muted-foreground" />
         </button>
+
+        <Link
+          to="/settings/documentation"
+          className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-accent transition-colors"
+        >
+          <div className="flex items-center space-x-3">
+            <FileText className="text-muted-foreground" size={18} />
+            <span className="text-foreground text-sm sm:text-base">Full Documentation</span>
+          </div>
+          <ChevronRight size={18} className="text-muted-foreground" />
+        </Link>
 
         <a
           href="https://github.com/SarangVehale/finance-footprint"
