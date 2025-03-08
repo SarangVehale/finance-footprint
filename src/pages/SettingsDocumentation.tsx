@@ -998,7 +998,7 @@ console.log("Current state:", { transactions, balance });`}
           <div className="bg-muted/30 p-3 rounded">
             <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
               <li>Open browser developer tools</li>
-              <li>Go to Application > Local Storage</li>
+              <li>Go to Application {'>>'} Local Storage</li>
               <li>Clear data for the application domain</li>
               <li>Refresh the application to start with clean state</li>
             </ol>
