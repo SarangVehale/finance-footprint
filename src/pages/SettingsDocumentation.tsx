@@ -1,4 +1,3 @@
-
 import React from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -146,7 +145,7 @@ const SettingsDocumentation: React.FC = () => {
         {/* Mobile Tabs */}
         <div className="md:hidden w-full p-2">
           <Tabs defaultValue="overview" value={activeSection} onValueChange={setActiveSection} className="w-full">
-            <ScrollArea className="w-full" orientation="horizontal">
+            <ScrollArea className="w-full">
               <TabsList className="mb-4 flex w-max">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="system">System</TabsTrigger>
@@ -174,7 +173,6 @@ const SettingsDocumentation: React.FC = () => {
   );
 };
 
-// Individual Content Components
 const OverviewContent: React.FC = () => (
   <div className="space-y-6">
     <div>
