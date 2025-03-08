@@ -135,7 +135,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Handle virtual keyboard */
+  /* Handle virtual keyboard - Modified to keep menu visible */
   body.keyboard-open {
     height: -webkit-fill-available;
     position: fixed;
@@ -145,6 +145,27 @@
   
   body.keyboard-open .fixed {
     position: absolute;
+  }
+
+  /* Keep the menu visible when keyboard is open */
+  body.keyboard-open .bottom-bar {
+    transform: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 50 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+  }
+
+  /* Modify modal content positioning when keyboard is open */
+  body.keyboard-open [role="dialog"] {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  body.keyboard-open .fixed.inset-0 {
+    height: auto;
+    bottom: auto;
   }
 
   /* Android gesture bar handling */
@@ -176,6 +197,15 @@
     max-height: 70vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Added specific keyboard+modal handling */
+  .keyboard-open .modal-content {
+    transform: translateY(-25%) !important;
+  }
+
+  .pb-keyboard {
+    padding-bottom: 50vh !important;
   }
 }
 

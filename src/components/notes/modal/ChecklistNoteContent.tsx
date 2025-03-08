@@ -53,6 +53,7 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
     <div 
       ref={checklistContainerRef} 
       className="space-y-2 overflow-y-auto pb-20"
+      style={{ maxHeight: "calc(50vh - 120px)" }}
     >
       {checklist.map((item, index) => (
         <div key={index} className="flex items-center space-x-2 animate-slide-in">
@@ -79,7 +80,8 @@ const ChecklistNoteContent: React.FC<ChecklistNoteContentProps> = ({
             style={{ 
               textOverflow: 'ellipsis',
               WebkitAppearance: 'none',
-              appearance: 'none'
+              appearance: 'none',
+              fontSize: '16px' // Prevent iOS zoom
             }}
           />
         </div>

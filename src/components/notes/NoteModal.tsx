@@ -106,6 +106,13 @@ const NoteModal = ({
     }
     
     onSave();
+    
+    // Show confirmation toast
+    toast({
+      title: "Note Saved",
+      description: "Your note has been saved successfully.",
+      duration: 3000,
+    });
   };
   
   // Handle outside clicks
@@ -130,7 +137,8 @@ const NoteModal = ({
   // Fix keyboard and view issues
   useEffect(() => {
     if (show) {
-      document.body.classList.add('keyboard-open');
+      // Don't add keyboard-open class here to avoid menu hiding
+      // Instead, just adjust the content's visibility
       
       // Smooth scroll to modal when opened
       setTimeout(() => {
@@ -147,11 +155,9 @@ const NoteModal = ({
         titleInputRef.current.style.webkitUserSelect = 'text';
         titleInputRef.current.style.userSelect = 'text';
       }
-    } else {
-      document.body.classList.remove('keyboard-open');
     }
 
-    // Adjust height based on viewport
+    // Adjust height for better keyboard compatibility
     const handleResize = () => {
       const viewportHeight = window.innerHeight;
       const windowHeight = window.outerHeight;
@@ -163,18 +169,14 @@ const NoteModal = ({
       });
       
       if (windowHeight > viewportHeight * 1.2) {
-        // Keyboard is likely open
+        // Keyboard is likely open - make content area smaller
         if (noteType === 'text' && contentRef.current) {
-          contentRef.current.style.height = `${viewportHeight * 0.4}px`;
-        } else if (noteType === 'checklist' && checklistContainerRef.current) {
-          checklistContainerRef.current.style.maxHeight = `${viewportHeight * 0.4}px`;
+          contentRef.current.style.height = `${viewportHeight * 0.3}px`;
         }
       } else {
         // Keyboard is likely closed
         if (noteType === 'text' && contentRef.current) {
           contentRef.current.style.height = '300px';
-        } else if (noteType === 'checklist' && checklistContainerRef.current) {
-          checklistContainerRef.current.style.maxHeight = '300px';
         }
       }
     };
@@ -184,7 +186,6 @@ const NoteModal = ({
     handleResize();
 
     return () => {
-      document.body.classList.remove('keyboard-open');
       window.removeEventListener('resize', handleResize);
     };
   }, [show, noteType, modalRef]);
@@ -257,7 +258,7 @@ const NoteModal = ({
       const saveTimer = setInterval(() => {
         console.log("Auto-saving note data");
         handleSave();
-      }, 5000);
+      }, 10000); // Increased to 10 seconds to reduce save frequency
       
       return () => clearInterval(saveTimer);
     }
@@ -269,7 +270,8 @@ const NoteModal = ({
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
       <div 
         ref={modalContentRef}
-        className="bg-card w-full h-[calc(100%-env(safe-area-inset-top))] sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col pt-safe-top pb-safe-bottom"
+        className="bg-card w-full max-h-[80vh] sm:h-auto sm:max-w-lg sm:rounded-2xl animate-slide-up overflow-hidden flex flex-col pt-safe-top pb-safe-bottom"
+        style={{ bottom: 0, position: 'absolute', minHeight: '60vh' }}
       >
         <ModalHeader 
           noteType={noteType}
@@ -281,7 +283,7 @@ const NoteModal = ({
           isMobile={isMobile}
         />
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           {!storageAvailable && (
             <div className="bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl p-3 flex items-center space-x-2 mb-4">
               <AlertCircle className="text-red-500" size={16} />
@@ -299,6 +301,7 @@ const NoteModal = ({
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
             data-prevent-duplication="true"
+            style={{ fontSize: '16px' }} // Prevent iOS zoom
           />
 
           {noteType === "text" ? (
@@ -328,7 +331,7 @@ const NoteModal = ({
         <div className="p-4 border-t border-border">
           <button
             onClick={handleSave}
-            className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition-colors"
+            className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition-colors active:scale-95"
           >
             Save Note
           </button>

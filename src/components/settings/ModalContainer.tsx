@@ -82,6 +82,35 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     };
   }, [setActiveModal]);
   
+  // Handle keyboard focus and position adjustment
+  useEffect(() => {
+    const handleKeyboardFocus = () => {
+      if (window.visualViewport) {
+        const modalElement = modalContentRef.current;
+        if (modalElement) {
+          console.log("Modal keyboard adjustment");
+          
+          // Adjust modal position to ensure it's visible with keyboard
+          if (window.visualViewport.height < window.innerHeight * 0.8) {
+            modalElement.style.height = "auto";
+            modalElement.style.maxHeight = `${window.visualViewport.height * 0.7}px`;
+          } else {
+            modalElement.style.maxHeight = "70vh";
+            modalElement.style.height = "auto";
+          }
+        }
+      }
+    };
+    
+    window.visualViewport?.addEventListener('resize', handleKeyboardFocus);
+    window.addEventListener('resize', handleKeyboardFocus);
+    
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handleKeyboardFocus);
+      window.removeEventListener('resize', handleKeyboardFocus);
+    };
+  }, []);
+  
   const getModalTitle = () => {
     switch (activeModal) {
       case "appearance": return "Appearance";
@@ -135,7 +164,8 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
       <div 
         ref={modalContentRef} 
-        className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-lg overflow-hidden animate-slide-up transition-all duration-300"
+        className="bg-card w-full max-w-md sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-lg overflow-hidden animate-slide-up transition-all duration-300 max-h-[70vh]"
+        style={{ bottom: 0, position: 'absolute', minHeight: '50vh' }}
       >
         <div className="flex justify-between items-center p-3 sm:p-4 border-b border-border sticky top-0 bg-card/95 backdrop-blur-sm">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">
@@ -151,7 +181,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
           </button>
         </div>
 
-        <div className="p-4 sm:p-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
+        <div className="p-4 sm:p-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
           {renderModalContent()}
         </div>
       </div>

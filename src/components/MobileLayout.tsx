@@ -66,7 +66,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
     };
   }, [navigate, isHomePage, onBackClick]);
 
-  // Handle keyboard visibility and navigation bar height
+  // Handle keyboard visibility and navigation bar height with improved menu visibility
   useEffect(() => {
     // Track if keyboard is visible
     let keyboardVisible = false;
@@ -124,39 +124,10 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
     setNavigationBarPadding();
     handleKeyboardVisibility();
     
-    // Add global CSS for keyboard handling
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .keyboard-open .modal-content {
-        transform: translateY(-30%);
-      }
-      .pb-keyboard {
-        padding-bottom: 50vh !important;
-      }
-      .has-gesture-bar .bottom-bar {
-        padding-bottom: env(safe-area-inset-bottom, 20px);
-      }
-      .keyboard-open .fixed-bottom, 
-      .keyboard-open .fixed.bottom-0 {
-        transform: translateY(-100%);
-        visibility: hidden;
-      }
-      .keyboard-open [role="dialog"] {
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-      .keyboard-open .fixed.inset-0 {
-        height: auto;
-        bottom: auto;
-      }
-    `;
-    document.head.appendChild(style);
-    
     return () => {
       window.removeEventListener('resize', handleKeyboardVisibility);
       window.removeEventListener('resize', setNavigationBarPadding);
       window.visualViewport?.removeEventListener('resize', handleKeyboardVisibility);
-      document.head.removeChild(style);
     };
   }, []);
 
@@ -194,7 +165,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       <main className="flex-1 overflow-y-auto custom-scrollbar pb-[calc(4rem+env(safe-area-inset-bottom))]">
         <div className="animate-fade-in">{children}</div>
       </main>
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm bottom-bar">
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-2 sm:px-6 pb-safe z-40 rounded-t-2xl shadow-sm bottom-bar transition-all duration-300">
         <NavLink to="/home" icon={<Home className="w-5 h-5 sm:w-6 sm:h-6" />} label="Home" />
         <NavLink to="/analytics" icon={<PieChart className="w-5 h-5 sm:w-6 sm:h-6" />} label="Analytics" />
         <NavLink to="/history" icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />} label="History" />
