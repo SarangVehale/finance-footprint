@@ -39,6 +39,23 @@ Finance Footprint is a personal finance tracking application built with React, T
 
 For detailed development instructions, see the [GitHub repository](https://github.com/SarangVehale/finance-footprint).
 
+## Accessing Full Documentation
+
+For more detailed documentation:
+
+1. Open the application
+2. Navigate to the Settings page
+3. Select "Documentation"
+4. Browse through the various documentation tabs:
+   - Overview
+   - System Architecture
+   - User Guide
+   - Technical Details
+   - API Reference
+   - File Structure
+   - Troubleshooting
+   - Security
+
 ## Troubleshooting
 
 Common issues and their solutions:
