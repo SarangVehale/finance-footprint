@@ -9,3 +9,4 @@ export { default as TechnicalContent } from './TechnicalContent';
 export { default as TroubleshootingContent } from './TroubleshootingContent';
 export { default as SecurityContent } from './SecurityContent';
 export { default as NavItem } from './NavItem';
+export { default as DocContainer } from './DocContainer';

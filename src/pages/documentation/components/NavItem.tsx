@@ -14,17 +14,20 @@ interface NavItemProps {
 
 /**
  * Navigation item component for the documentation sidebar
+ * Responsive design for both desktop and mobile viewing
  */
 const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, onClick }) => (
   <button
     onClick={onClick}
     className={cn(
-      "flex items-center space-x-3 w-full px-4 py-3 text-left",
-      isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground"
+      "flex items-center space-x-3 w-full px-3 py-2.5 text-left rounded-md transition-colors",
+      isActive 
+        ? "bg-accent text-accent-foreground font-medium" 
+        : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground"
     )}
   >
-    {icon}
-    <span className="font-medium">{label}</span>
+    <span className="flex-shrink-0">{icon}</span>
+    <span className="font-medium truncate">{label}</span>
   </button>
 );
 

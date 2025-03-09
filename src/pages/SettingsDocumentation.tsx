@@ -3,7 +3,6 @@ import React from "react";
 import MobileLayout from "@/components/MobileLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "react-router-dom";
 import { 
   Book, 
   Code, 
@@ -136,25 +135,73 @@ const SettingsDocumentation: React.FC = () => {
         </aside>
 
         {/* Mobile Tabs */}
-        <div className="md:hidden w-full p-2">
-          <Tabs defaultValue="overview" value={activeSection} onValueChange={setActiveSection} className="w-full">
-            <ScrollArea className="w-full">
-              <TabsList className="mb-4 flex w-max">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="system">System</TabsTrigger>
-                <TabsTrigger value="userGuide">User Guide</TabsTrigger>
-                <TabsTrigger value="technical">Technical</TabsTrigger>
-                <TabsTrigger value="apiReference">API</TabsTrigger>
-                <TabsTrigger value="troubleshooting">Troubleshooting</TabsTrigger>
-              </TabsList>
-            </ScrollArea>
-          </Tabs>
+        <div className="md:hidden w-full p-2 pb-0">
+          <ScrollArea className="w-full pb-2">
+            <TabsList className="mb-2 flex w-max px-1">
+              <TabsTrigger 
+                value="overview" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("overview")}
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="system" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("system")}
+              >
+                System
+              </TabsTrigger>
+              <TabsTrigger 
+                value="userGuide" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("userGuide")}
+              >
+                User Guide
+              </TabsTrigger>
+              <TabsTrigger 
+                value="apiReference" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("apiReference")}
+              >
+                API
+              </TabsTrigger>
+              <TabsTrigger 
+                value="fileStructure" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("fileStructure")}
+              >
+                Files
+              </TabsTrigger>
+              <TabsTrigger 
+                value="technical" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("technical")}
+              >
+                Technical
+              </TabsTrigger>
+              <TabsTrigger 
+                value="troubleshooting" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("troubleshooting")}
+              >
+                Troubleshooting
+              </TabsTrigger>
+              <TabsTrigger 
+                value="security" 
+                className="text-xs px-2 py-1.5"
+                onClick={() => setActiveSection("security")}
+              >
+                Security
+              </TabsTrigger>
+            </TabsList>
+          </ScrollArea>
         </div>
 
         {/* Content area */}
         <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="p-4 sm:p-6">
+          <ScrollArea className="h-full px-3 py-2 md:p-0">
+            <div className="p-2 sm:p-4 md:p-6">
               {renderContent()}
             </div>
           </ScrollArea>
